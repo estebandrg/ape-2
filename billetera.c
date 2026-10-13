@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <usuario.h>;
+#include <tUsuario.h>;
 #include <billetera.h>;
-
 
 typedef struct Billetera {
     int cantidadUsuarios;

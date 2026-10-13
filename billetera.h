@@ -1,7 +1,7 @@
 #ifndef BILLETERA_H
 #define BILLETERA_H
 
-#include <usuario.h>
+#include <tUsuario.h>
 
 typedef struct Billetera *tBilletera;
 
@@ -14,6 +14,7 @@ void eliminarUsuario(int id);
 void registrarIngreso(int monto);
 void registrarEgreso(int monto);
 
-tUsuario buscarUsuario(int id);
+Usuario buscarUsuario(int id);
+
 
 #endif

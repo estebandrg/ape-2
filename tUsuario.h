@@ -1,6 +1,8 @@
 #ifndef TADUSUARIO_H
 #define TADUSUARIO_H
 
+#include "tOperacion.h"
+
 //Declaracion del tipo exportado
 typedef struct tUsuario *Usuario;
 
