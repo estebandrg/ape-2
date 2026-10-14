@@ -12,6 +12,8 @@ int verIdUsuario(Usuario usuario_objetivo);
 char* verNombreUsuario(Usuario usuario_objetivo);
 float verSaldoUsuario(Usuario usuario_objetivo);
 Operacion verOpUsuario(Usuario usuario_objetivo);
+Usuario verIzqUsuario(Usuario usuario_objetivo);
+Usuario verDerUsuario(Usuario usuario_objetivo);
 
 Operacion buscarOpUsuario(Usuario usuario_objetivo, int id);
 
