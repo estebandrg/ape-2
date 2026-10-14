@@ -7,20 +7,20 @@
 typedef struct Billetera {
     int cantidadUsuarios;
     Usuario *usuarios;
-} Billetera;
+} *Billetera;
 
 //  Constructor
-Billetera* crearBilletera() {
-    Billetera *objeto = malloc(sizeof(Billetera));
-    objeto->cantidadUsuarios = 0;
+Billetera crearBilletera() {
+    Billetera nuevaBilletera = malloc(sizeof(Billetera));
+    nuevaBilletera->cantidadUsuarios = 0;
 
-    return objeto;
+    return nuevaBilletera;
 }
 
 
-void insertarUsuario(tUsuario *actual, tUsuario nuevoUsuario) {
-    // nuevoUsuario tiene salod menor
-    if (actual.id > nuevoUsuario.id) {
+void insertarUsuario(Usuario *actual, Usuario nuevoUsuario) {
+    // nuevoUsuario tiene un id menor
+    if (verIdUsuario(actual) > verIdUsuario(nuevoUsuario)) {
         
         // tiene un hijo izquierda?
         if (actual.izq != NULL) {

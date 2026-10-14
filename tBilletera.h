@@ -1,10 +1,10 @@
 #ifndef BILLETERA_H
 #define BILLETERA_H
 
-typedef struct Billetera *tBilletera;
+typedef struct tBilletera *Billetera;
 
 // Constructor
-tBilletera crearBilletera();
+Billetera crearBilletera();
 
 //Observadores
 void registrarUsuario();

@@ -31,12 +31,15 @@ Usuario crearUsuario(int id, char nombre[20], float saldo, Operacion lista){
 int verIdUsuario(Usuario usuario_objetivo){
   return usuario_objetivo->id;
 }
+
 char* verNombreUsuario(Usuario usuario_objetivo){
   return usuario_objetivo->nombre;
 }
+
 float verSaldoUsuario(Usuario usuario_objetivo){
   return usuario_objetivo->saldo;
 }
+
 Operacion verOpUsuario(Usuario usuario_objetivo){
   return usuario_objetivo->lista;
 }
@@ -50,13 +53,13 @@ Usuario verDerUsuario(Usuario usuario_objetivo){
   return hijoDer;
 }
 
-Operacion buscarOpUsuario(Usuario *usuario_objetivo, int id){
+Operacion buscarOpUsuario(Usuario usuario_objetivo, int id){
   Operacion buscado = NULL;
-  if ((*usuario_objetivo)->lista != NULL) {
-    if (verIdOperacion((*usuario_objetivo)->lista) == id) {
-      buscado = (*usuario_objetivo)->lista;
+  if (usuario_objetivo->lista != NULL) {
+    if (verIdOperacion(usuario_objetivo->lista) == id) {
+      buscado = usuario_objetivo->lista;
     } else {
-      buscado = buscarOpUsuario((*usuario_objetivo)->lista, id); 
+      buscado = buscarOpUsuario(usuario_objetivo->lista, id); 
     }
   }
   return buscado;
