@@ -17,50 +17,43 @@ Billetera crearBilletera() {
     return nuevaBilletera;
 }
 
+// Funcionalidades privadas
+void _insertarUsuario(Usuario *actual, Usuario nuevoUsuario) {
+    
+    // Catch de erroriño
+    if(*actual == NULL){
+        *actual = nuevoUsuario;
+    } else {
 
-void insertarUsuario(Usuario *actual, Usuario nuevoUsuario) {
-    // nuevoUsuario tiene un id menor
-    if (verIdUsuario(actual) > verIdUsuario(nuevoUsuario)) {
-        
-        // tiene un hijo izquierda?
-        if (actual.izq != NULL) {
-            insertarUsuario(actual.izq, nuevoUsuario)
-
-            // si no tiene hijo izquierda
+        if(verIdUsuario(nuevoUsuario) < verIdUsuario(*actual)){
+            Usuario izq = verIzqUsuario(*actual);
+            insertarUsuarioABB(&izq, nuevoUsuario);
+            asignarIzqUsuario(*actual, izq);
         } else {
-            actual->izq = nuevoUsuario
-        }
-
-    // nuevoUsuario tiene id mayor
-    } (actual.id < nuevoUsuario.id) {
-
-        // tiene un hijo derecho?
-        if (actual.der != NULL) {
-            insertarUsuario(actual.der, nuevoUsuario)
-
-            // si no tiene hijo izquierda
-        } else {
-            actual->der = nuevoUsuario
+            Usuario der = verDerUsuario(*actual);
+            insertarUsuarioABB(&der, nuevoUsuario);
+            asignarDerUsuario(*actual, der);
         }
     }
 };
 
-void _obtenerUsuario() {
-    
-}
-
-tUsuario* buscarUsuario(Billetera, *billetera, int id) {
-    if (Billetera->usuarios != NULL) {
-
+Usuario _buscarUsuario(Usuario actual, int id){
+    if(actual == NULL){
+        return NULL;
+    }
+    if(verIdUsuario(actual) == id){
+        return actual;
+    }
+    if(id < verIdUsuario(actual)){
+        return _buscarUsuario(verIzqUsuario(actual), id);
     } else {
-
-        
+        return _buscarUsuario(verDerUsuario(actual), id);
     }
 }
 
-// Procedimiento recursivo
-void registrarUsuario(Billetera *billetera, tUsuario usuarioNuevo) {
+// Funcionalidades publicas
 
+void registrarUsuario(Billetera billetera, Usuario usuarioNuevo) {
     if(billetera->usuarios=NULL){
         billetera->usuarios = usuarioNuevo;
     } else {
@@ -69,7 +62,22 @@ void registrarUsuario(Billetera *billetera, tUsuario usuarioNuevo) {
 }
 
 
+void registrarOperacion(Billetera Billetera, Usuario usuario, Operacion operacion) {
 
-usuario = crearUsuario()
+}
+// esto deberia recibir una operacion, la cual en base a su tipo, determinamos si es egreso o ingreso.
+// debatimos mañana, concluimos en crear registrarOperacion.
+void registrarIngreso() {
 
-agregarUsuario(billetera, usuario)
+};
+
+void registrarEgreso() {
+
+}
+
+void eliminarUsuario(int id);
+
+int obtenerCantUsuarios(Billetera billetera) {
+    return billetera->cantidadUsuarios;
+}
+

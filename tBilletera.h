@@ -6,12 +6,13 @@ typedef struct tBilletera *Billetera;
 // Constructor
 Billetera crearBilletera();
 
-//Observadores
+// Modificadores
 void registrarUsuario();
 void eliminarUsuario(int id);
 void registrarIngreso(int monto);
 void registrarEgreso(int monto);
 
+int obtenerCantUsuarios();
 Usuario buscarUsuario(int id);
 
 

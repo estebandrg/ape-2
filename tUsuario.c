@@ -66,6 +66,15 @@ Operacion buscarOpUsuario(Usuario usuario_objetivo, int id){
   return buscado;
 }
 
+// Establecedores
+void asignarIzqUsuario(Usuario usuario_objetivo, Usuario nuevoIzq){
+    usuario_objetivo->hizq = nuevoIzq;
+}
+
+void asignarDerUsuario(Usuario usuario_objetivo, Usuario nuevoDer){
+    usuario_objetivo->hder = nuevoDer;
+}
+
 //Destructoras
 void destruirUsuario(Usuario usuario_objetivo, int id);
 

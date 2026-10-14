@@ -1,6 +1,8 @@
 #ifndef TADUSUARIO_H
 #define TADUSUARIO_H
 
+#include <tOperacion.h>
+
 //Declaracion del tipo exportado
 typedef struct tUsuario *Usuario;
 
@@ -14,6 +16,10 @@ float verSaldoUsuario(Usuario usuario_objetivo);
 Operacion verOpUsuario(Usuario usuario_objetivo);
 Usuario verIzqUsuario(Usuario usuario_objetivo);
 Usuario verDerUsuario(Usuario usuario_objetivo);
+
+// Establecedores
+void asignarIzqUsuario(Usuario usuario_objetivo, Usuario nuevoIzq);
+void asignarDerUsuario(Usuario usuario_objetivo, Usuario nuevoDer);
 
 Operacion buscarOpUsuario(Usuario usuario_objetivo, int id);
 
