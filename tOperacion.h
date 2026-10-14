@@ -3,10 +3,10 @@
 #include "tFecha.h"
 
 typedef struct tOperacion *Operacion;
-//Constructora
+//Constructor
 Operacion crearOperacion(int id, char tipo[8], float monto, Fecha fechaOp);
 
-//Modificadoras
+//Observadoras
 int verIdOperacion(Operacion op_objetivo);
 
 float verMontoOperacion(Operacion op_objetivo);
@@ -15,7 +15,11 @@ Fecha verFechaOperacion(Operacion op_objetivo);
 
 char* verTipoOperacion(Operacion op_objetivo);
 
+//Modificadoras
+void pasarSigOperacion(Operacion* op_objetivo);
+
 void asignarOperacion(Operacion* op_destino, Operacion op_fuente);
+
 //Destructora
 void destruirOperacion(int id);
 

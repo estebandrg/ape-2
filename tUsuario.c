@@ -48,6 +48,7 @@ Usuario verIzqUsuario(Usuario usuario_objetivo){
   Usuario hijoIzq = usuario_objetivo->hizq;
   return hijoIzq;
 }
+
 Usuario verDerUsuario(Usuario usuario_objetivo){
   Usuario hijoDer = usuario_objetivo->hder;
   return hijoDer;

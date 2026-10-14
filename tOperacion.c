@@ -9,6 +9,7 @@ typedef struct tOperacion {
   char tipo[8];
   float monto;
   Fecha fechaOp;
+  struct tOperacion *sig;
 } *Operacion;
 
 //Constructora
@@ -25,35 +26,31 @@ Operacion crearOperacion(int id, char tipo[8], float monto, Fecha fechaOp){
 
 //Observadoras
 int verIdOperacion(Operacion op_objetivo){
-  int id_solicitado=op_objetivo->id;
-  return id_solicitado;
+  return op_objetivo->id;
 }
 
 float verMontoOperacion(Operacion op_objetivo){
-  float monto_solicitado=op_objetivo->monto;
-  return monto_solicitado;
+  return op_objetivo->monto;
 }
 
 Fecha verFechaOperacion(Operacion op_objetivo){
-  Fecha fecha_solicitada;
-  asignarFecha(&fecha_solicitada, op_objetivo->fechaOp);
-
-  return fecha_solicitada;
+  return op_objetivo->fechaOp;
 }
 
 char* verTipoOperacion(Operacion op_objetivo){
-  char tipo_solicitado[8];
-  strcpy(tipo_solicitado, op_objetivo->tipo);
-
-  return tipo_solicitado;
+  return op_objetivo->tipo;
 }
 
 //Modificadora
+void pasarSigOperacion(Operacion *op_objetivo){
+  (*op_objetivo) = (*op_objetivo)->sig;
+}
+
 void asignarOperacion(Operacion* op_destino, Operacion op_fuente){
-    (*op_destino)->id=op_fuente->id;
-    strcpy((*op_destino)->tipo, op_fuente->tipo);
-    (*op_destino)->monto=op_fuente->monto;
-    asignarFecha((*op_destino)->fechaOp, op_fuente->fechaOp);
+  (*op_destino)->id=op_fuente->id;
+  strcpy((*op_destino)->tipo, op_fuente->tipo);
+  (*op_destino)->monto=op_fuente->monto;
+  asignarFecha((*op_destino)->fechaOp, op_fuente->fechaOp);
 }
 
 void destruirOperacion(int id);
