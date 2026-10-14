@@ -2,11 +2,11 @@
 #include <stdlib.h>
 
 #include "tUsuario.h"
-#include "billetera.h"
+#include "tBilletera.h"
 
 typedef struct Billetera {
     int cantidadUsuarios;
-    tUsuario usuarios;
+    Usuario *usuarios;
 } Billetera;
 
 //  Constructor
