@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include "billetera.h"
 
@@ -7,9 +6,10 @@ typedef struct {
     int uid;
     char tipo;      // 'I' ingreso, 'E' egreso
     int monto;
+    int saldo;      // saldo de la billetera luego de la operacion
 } Operacion;
 
-// Nodo del arbol de operaciones, ordenado por uid
+// Nodo del arbol de operaciones, ordenado por saldo
 typedef struct nodoOperacion {
     Operacion operacion;
     struct nodoOperacion *izq;
@@ -25,7 +25,7 @@ struct tBilletera {
 
 // Funcionalidades privadas
 
-Operacion crearOperacion(int uid, int esIngreso, int monto) {
+Operacion crearOperacion(int uid, int esIngreso, int monto, int saldo) {
     Operacion nueva;
     nueva.uid = uid;
     if (esIngreso) {
@@ -34,11 +34,12 @@ Operacion crearOperacion(int uid, int esIngreso, int monto) {
         nueva.tipo = 'E';
     }
     nueva.monto = monto;
+    nueva.saldo = saldo;
 
     return nueva;
 }
 
-// Funcion recursiva: inserta la operacion manteniendo el orden por uid
+// Funcion recursiva: inserta la operacion manteniendo el orden por saldo
 NodoOperacion *insertarOperacion(NodoOperacion *raiz, Operacion operacion) {
     if (raiz == NULL) {
         NodoOperacion *nuevo = malloc(sizeof(NodoOperacion));
@@ -49,26 +50,13 @@ NodoOperacion *insertarOperacion(NodoOperacion *raiz, Operacion operacion) {
         return nuevo;
     }
 
-    if (operacion.uid < raiz->operacion.uid) {
+    if (operacion.saldo < raiz->operacion.saldo) {
         raiz->izq = insertarOperacion(raiz->izq, operacion);
     } else {
         raiz->der = insertarOperacion(raiz->der, operacion);
     }
 
     return raiz;
-}
-
-// Recorrido en orden: muestra las operaciones de menor a mayor uid
-void mostrarOperaciones(NodoOperacion *raiz) {
-    if (raiz != NULL) {
-        mostrarOperaciones(raiz->izq);
-        if (raiz->operacion.tipo == 'I') {
-            printf("  [%d] ingreso $%d\n", raiz->operacion.uid, raiz->operacion.monto);
-        } else {
-            printf("  [%d] egreso  $%d\n", raiz->operacion.uid, raiz->operacion.monto);
-        }
-        mostrarOperaciones(raiz->der);
-    }
 }
 
 void liberarOperaciones(NodoOperacion *raiz) {
@@ -79,10 +67,10 @@ void liberarOperaciones(NodoOperacion *raiz) {
     }
 }
 
-// Crea una operacion con el siguiente uid y la agrega a la coleccion
+// Crea una operacion con el siguiente uid y el saldo ya actualizado, y la agrega a la coleccion
 void agregarOperacion(tBilletera billetera, int esIngreso, int monto) {
     billetera->ultimoUid++;
-    Operacion operacion = crearOperacion(billetera->ultimoUid, esIngreso, monto);
+    Operacion operacion = crearOperacion(billetera->ultimoUid, esIngreso, monto, billetera->saldo);
     billetera->operaciones = insertarOperacion(billetera->operaciones, operacion);
 }
 
@@ -104,23 +92,19 @@ void destruirBilletera(tBilletera *billetera) {
 }
 
 void registrarIngreso(tBilletera billetera, int monto) {
-    agregarOperacion(billetera, 1, monto);
     billetera->saldo += monto;
+    agregarOperacion(billetera, 1, monto);
 }
 
 int registrarEgreso(tBilletera billetera, int monto) {
     int alcanza = monto <= billetera->saldo;
 
     if (alcanza) {
-        agregarOperacion(billetera, 0, monto);
         billetera->saldo -= monto;
+        agregarOperacion(billetera, 0, monto);
     }
 
     return alcanza;
-}
-
-void listarOperaciones(tBilletera billetera) {
-    mostrarOperaciones(billetera->operaciones);
 }
 
 int verSaldo(tBilletera billetera) {

@@ -28,9 +28,6 @@ int registrarEgreso(tBilletera billetera, int monto);
 
 // Observadoras
 
-// Muestra por pantalla todas las operaciones, ordenadas por uid
-void listarOperaciones(tBilletera billetera);
-
 // Retorna el saldo actual de la billetera
 int verSaldo(tBilletera billetera);
 

@@ -7,12 +7,23 @@ typedef struct Usuario {
     int id;
     char nombre[20];
     tBilletera billetera;
-    struct Usuario *sig;
+    struct Usuario *izq;
+    struct Usuario *der;
 } Usuario;
 
-// Agrega un usuario al principio de la lista, con una billetera nueva
-void agregarUsuario(Usuario **lista, int id, const char *nombre) {
+// Agrega un usuario al arbol (ordenado por id), con una billetera nueva
+void agregarUsuario(Usuario **raiz, int id, const char *nombre) {
+    while (*raiz != NULL) {
+        if (id < (*raiz)->id) {
+            raiz = &(*raiz)->izq;
+        } else {
+            raiz = &(*raiz)->der;
+        }
+    }
+
     Usuario *nuevo = malloc(sizeof(Usuario));
+
+    // Copiar caracter por caracter el nombre
     nuevo->id = id;
     int i = 0;
     while (nombre[i] != '\0' && i < 19) {
@@ -21,33 +32,44 @@ void agregarUsuario(Usuario **lista, int id, const char *nombre) {
     }
     nuevo->nombre[i] = '\0';
     nuevo->billetera = crearBilletera();
-    nuevo->sig = *lista;
-    *lista = nuevo;
+    nuevo->izq = NULL;
+    nuevo->der = NULL;
+    *raiz = nuevo;
 }
 
 // Busca un usuario por id. Retorna NULL si no existe
-Usuario *buscarUsuario(Usuario *lista, int id) {
-    Usuario *actual = lista;
-
-    while (actual != NULL && actual->id != id) {
-        actual = actual->sig;
+Usuario *buscarUsuario(Usuario *raiz, int id) {
+    while (raiz != NULL && raiz->id != id) {
+        if (id < raiz->id) {
+            raiz = raiz->izq;
+        } else {
+            raiz = raiz->der;
+        }
     }
 
-    return actual;
+    return raiz;
 }
 
-// Libera cada billetera y cada usuario de la lista
-void liberarUsuarios(Usuario **lista) {
-    Usuario *actual = *lista;
-
-    while (actual != NULL) {
-        Usuario *siguiente = actual->sig;
-        destruirBilletera(&actual->billetera);
-        free(actual);
-        actual = siguiente;
+// Muestra los usuarios cuyo saldo supera el monto, ordenados por id
+void listarUsuariosConSaldoMayorA(Usuario *raiz, int monto) {
+    if (raiz != NULL) {
+        listarUsuariosConSaldoMayorA(raiz->izq, monto);
+        if (verSaldo(raiz->billetera) > monto) {
+            printf("Usuario %d: %s, saldo $%d\n", raiz->id, raiz->nombre, verSaldo(raiz->billetera));
+        }
+        listarUsuariosConSaldoMayorA(raiz->der, monto);
     }
+}
 
-    *lista = NULL;
+// Libera cada billetera y cada usuario del arbol
+void liberarUsuarios(Usuario **raiz) {
+    if (*raiz != NULL) {
+        liberarUsuarios(&(*raiz)->izq);
+        liberarUsuarios(&(*raiz)->der);
+        destruirBilletera(&(*raiz)->billetera);
+        free(*raiz);
+        *raiz = NULL;
+    }
 }
 
 int main(void) {
@@ -60,8 +82,6 @@ int main(void) {
     registrarIngreso(ana->billetera, 1000);
     registrarEgreso(ana->billetera, 250);
 
-    printf("Operaciones de %s:\n", ana->nombre);
-    listarOperaciones(ana->billetera);
     printf("Saldo de %s: $%d\n\n", ana->nombre, verSaldo(ana->billetera));
 
     Usuario *beto = buscarUsuario(usuarios, 2);
@@ -70,6 +90,9 @@ int main(void) {
         printf("%s no tiene saldo suficiente para el egreso de $800\n", beto->nombre);
     }
     printf("Saldo de %s: $%d\n", beto->nombre, verSaldo(beto->billetera));
+
+    printf("\nUsuarios con saldo mayor a $600:\n");
+    listarUsuariosConSaldoMayorA(usuarios, 600);
 
     liberarUsuarios(&usuarios);
 
