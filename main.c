@@ -72,7 +72,7 @@ void liberarUsuarios(Usuario **raiz) {
     }
 }
 
-int main(void) {
+int main() {
     Usuario *usuarios = NULL;
 
     agregarUsuario(&usuarios, 1, "Ana");
