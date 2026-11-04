@@ -74,21 +74,31 @@ void destruirUsuarios(Usuario cabeza) {
 /* Debug */
 
 void imprimirUsuarios(Usuario cabeza) {
-    printf("%-8s %-20s %12s %5s\n", "UID", "Nombre", "Saldo", "Ops");
+    printf("UID | Nombre | Saldo | Operaciones\n");
     for (; cabeza != NULL; cabeza = verSigUsuario(cabeza)) {
         Billetera b = verBilleteraUsuario(cabeza);
-        printf("%-8d %-20s %12.2f %5d\n", verIdUsuario(cabeza), verNombreUsuario(cabeza),
-               verSaldoBilletera(b), obtenerCantOpsBilletera(b));
+        printf("%d | ", verIdUsuario(cabeza));
+        printf("%s | ", verNombreUsuario(cabeza));
+        printf("%.2f | ", verSaldoBilletera(b));
+        printf("%d\n", obtenerCantOpsBilletera(b));
     }
 }
 
+void imprimirFecha(Fecha fecha) {
+    printf("%d/", obtenerDia(fecha));
+    printf("%d/", obtenerMes(fecha));
+    printf("%d", obtenerAnio(fecha));
+}
+
 void imprimirOperaciones(Usuario usuario) {
-    printf("Operaciones de %s (UID %d):\n", verNombreUsuario(usuario), verIdUsuario(usuario));
+    printf("Operaciones de %s:\n", verNombreUsuario(usuario));
     for (Operacion op = verOpsBilletera(verBilleteraUsuario(usuario)); op != NULL;
          op = verSigOperacion(op)) {
-        Fecha f = verFechaOperacion(op);
-        printf("  #%d %-8s %10.2f %02d/%02d/%04d\n", verIdOperacion(op), verTipoOperacion(op),
-               verMontoOperacion(op), obtenerDia(f), obtenerMes(f), obtenerAnio(f));
+        printf("%d | ", verIdOperacion(op));
+        printf("%s | ", verTipoOperacion(op));
+        printf("%.2f | ", verMontoOperacion(op));
+        imprimirFecha(verFechaOperacion(op));
+        printf("\n");
     }
 }
 
