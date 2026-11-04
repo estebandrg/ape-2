@@ -12,7 +12,7 @@ static int esBisiesto(int anio) {
 }
 
 static int esFechaValida(int dia, int mes, int anio) {
-  static const int diasPorMes[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  int diasPorMes[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
   if (anio <= 0 || anio >= 2027 || mes < 1 || mes > 12 || dia < 1) {
     return 0;
   }

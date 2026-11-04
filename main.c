@@ -19,7 +19,7 @@ Usuario buscarUsuario(Usuario cabeza, int uid) {
 }
 
 /* Crea un usuario con UID unico y lo agrega al inicio. NULL si no consigue un UID libre. */
-Usuario agregarUsuario(Usuario *cabeza, const char *nombre) {
+Usuario agregarUsuario(Usuario *cabeza, char *nombre) {
     for (int intento = 0; intento < MAX_INTENTOS_UID; intento++) {
         Usuario nuevo = crearUsuario(nombre);
         if (nuevo == NULL) {
@@ -102,7 +102,7 @@ void imprimirOperaciones(Usuario usuario) {
     }
 }
 
-int registrarEnUsuario(Usuario usuario, int idOp, const char *tipo, float monto, Fecha fecha) {
+int registrarEnUsuario(Usuario usuario, int idOp, char *tipo, float monto, Fecha fecha) {
     Operacion op = crearOperacion(idOp, tipo, monto, fecha);
     if (op == NULL) {
         return 0;

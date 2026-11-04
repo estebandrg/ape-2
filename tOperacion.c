@@ -12,7 +12,7 @@ struct tOperacion {
 };
 
 // Constructora: copia la fecha recibida
-Operacion crearOperacion(int id, const char *tipo, float monto, Fecha fechaOp) {
+Operacion crearOperacion(int id, char *tipo, float monto, Fecha fechaOp) {
   Operacion nuevaOperacion = malloc(sizeof(struct tOperacion));
   if (nuevaOperacion != NULL) {
     nuevaOperacion->id = id;

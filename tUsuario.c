@@ -9,7 +9,7 @@ struct tUsuario {
   struct tUsuario* sig;
 };
 
-Usuario crearUsuario(const char *nombre) {
+Usuario crearUsuario(char *nombre) {
   Usuario nuevo = malloc(sizeof(struct tUsuario));
   if (nuevo == NULL) {
     return NULL;

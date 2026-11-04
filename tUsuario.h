@@ -10,7 +10,7 @@ typedef struct tUsuario *Usuario;
 
 // Constructora: genera un UID aleatorio en [0, UID_MAX] y crea su billetera propia.
 // El generador (srand) lo inicializa quien llama. Devuelve NULL si falla la memoria.
-Usuario crearUsuario(const char *nombre);
+Usuario crearUsuario(char *nombre);
 
 // Observadoras
 int verIdUsuario(Usuario usuario_objetivo);
