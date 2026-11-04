@@ -1,28 +1,27 @@
 #ifndef TADUSUARIO_H
 #define TADUSUARIO_H
 
-#include <tOperacion.h>
+#include "tBilletera.h"
 
-//Declaracion del tipo exportado
+#define UID_MAX 2000000
+
+// Nodo de una lista enlazada de usuarios
 typedef struct tUsuario *Usuario;
 
-//Constructor
-Usuario crearUsuario(int id, char nombre[20], float saldo, Operacion lista);
+// Constructora: genera un UID aleatorio en [0, UID_MAX] y crea su billetera propia.
+// El generador (srand) lo inicializa quien llama. Devuelve NULL si falla la memoria.
+Usuario crearUsuario(const char *nombre);
 
-//Observadoras
+// Observadoras
 int verIdUsuario(Usuario usuario_objetivo);
 char* verNombreUsuario(Usuario usuario_objetivo);
-float verSaldoUsuario(Usuario usuario_objetivo);
-Operacion verOpUsuario(Usuario usuario_objetivo);
-Usuario verIzqUsuario(Usuario usuario_objetivo);
-Usuario verDerUsuario(Usuario usuario_objetivo);
+Billetera verBilleteraUsuario(Usuario usuario_objetivo);
+Usuario verSigUsuario(Usuario usuario_objetivo);
 
-// Establecedores
-void asignarIzqUsuario(Usuario usuario_objetivo, Usuario nuevoIzq);
-void asignarDerUsuario(Usuario usuario_objetivo, Usuario nuevoDer);
+// Establecedoras
+void asignarSigUsuario(Usuario usuario_objetivo, Usuario nuevoSig);
 
-Operacion buscarOpUsuario(Usuario usuario_objetivo, int id);
+// Destructora: libera el usuario y su billetera (no libera los siguientes)
+void destruirUsuario(Usuario usuario_objetivo);
 
-//Destructoras
-void destruirUsuario(Usuario usuario_objetivo, int id);
 #endif

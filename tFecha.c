@@ -1,65 +1,52 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include "tFecha.h"
 
-typedef struct tFecha {
+struct tFecha {
   int dia;
   int mes;
   int anio;
-} *Fecha;
+};
 
-//Constructora
-Fecha crearFecha(int dia, int mes, int anio){
-  Fecha nuevaFecha=NULL;
-  if (esFechaValida(dia, mes, anio)){
-  
-    nuevaFecha=(Fecha)malloc(sizeof(Fecha));
-    nuevaFecha->dia= dia;
-    nuevaFecha->mes= mes;
-    nuevaFecha->anio= anio;
+static int esBisiesto(int anio) {
+  return (anio % 4 == 0 && anio % 100 != 0) || anio % 400 == 0;
+}
+
+static int esFechaValida(int dia, int mes, int anio) {
+  static const int diasPorMes[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  if (anio <= 0 || anio >= 2027 || mes < 1 || mes > 12 || dia < 1) {
+    return 0;
   }
+  int maxDia = diasPorMes[mes - 1];
+  if (mes == 2 && esBisiesto(anio)) {
+    maxDia = 29;
+  }
+  return dia <= maxDia;
+}
 
+Fecha crearFecha(int dia, int mes, int anio) {
+  Fecha nuevaFecha = NULL;
+  if (esFechaValida(dia, mes, anio)) {
+    nuevaFecha = malloc(sizeof(struct tFecha));
+    if (nuevaFecha != NULL) {
+      nuevaFecha->dia = dia;
+      nuevaFecha->mes = mes;
+      nuevaFecha->anio = anio;
+    }
+  }
   return nuevaFecha;
 }
-//Observadoras
-int obtenerDia(Fecha fecha_objetivo) {
-  int dia_solicitado;
-  dia_solicitado= fecha_objetivo->dia;
-  
-  return dia_solicitado;
-}
 
-int obtenerMes(Fecha fecha_objetivo){
-  int mes_solicitado;
-  mes_solicitado= fecha_objetivo->mes;
+int obtenerDia(Fecha fecha_objetivo) { return fecha_objetivo->dia; }
+int obtenerMes(Fecha fecha_objetivo) { return fecha_objetivo->mes; }
+int obtenerAnio(Fecha fecha_objetivo) { return fecha_objetivo->anio; }
 
-  return mes_solicitado;
-}
-
-int obtenerAnio(Fecha fecha_objetivo){
-  int anio_solicitado;
-  anio_solicitado= fecha_objetivo->anio;
-  
-  return anio_solicitado;
-}
-
-//Modificadoras
-void asignarFecha(Fecha* fecha_destino, Fecha fecha_fuente){
-  (*fecha_destino)->dia=fecha_fuente->dia;
-  (*fecha_destino)->mes=fecha_fuente->mes;
-  (*fecha_destino)->anio=fecha_fuente->anio;
-}
-
-//Auxiliares internas
-int esFechaValida(int dia, int mes, int anio){
-  int res=0;
-  if(anio>0&&anio<2027){
-    if((mes==4||mes==6||mes==9||mes==11)&&(dia>0&&dia<=30)){
-      res=1;
-    }
-    else if((mes==2)&&(dia>0&&dia<=28)){
-      res=1;
-    }
+void asignarFecha(Fecha* fecha_destino, Fecha fecha_fuente) {
+  if (*fecha_destino == NULL) {
+    *fecha_destino = malloc(sizeof(struct tFecha));
   }
-  return res;
+  **fecha_destino = *fecha_fuente;
+}
+
+void destruirFecha(Fecha fecha_objetivo) {
+  free(fecha_objetivo);
 }

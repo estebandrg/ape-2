@@ -1,83 +1,66 @@
-#include <stdio.h>
 #include <stdlib.h>
-
-#include "tUsuario.h"
+#include <string.h>
 #include "tBilletera.h"
 
-typedef struct Billetera {
-    int cantidadUsuarios;
-    Usuario *usuarios;
-} *Billetera;
+struct tBilletera {
+    float saldo;
+    int cantOps;
+    Operacion ops;
+};
 
-//  Constructor
-Billetera crearBilletera() {
-    Billetera nuevaBilletera = malloc(sizeof(Billetera));
-    nuevaBilletera->cantidadUsuarios = 0;
-
-    return nuevaBilletera;
+Billetera crearBilletera(void) {
+    Billetera nueva = malloc(sizeof(struct tBilletera));
+    if (nueva != NULL) {
+        nueva->saldo = 0;
+        nueva->cantOps = 0;
+        nueva->ops = NULL;
+    }
+    return nueva;
 }
 
-// Funcionalidades privadas
-void _insertarUsuario(Usuario *actual, Usuario nuevoUsuario) {
-    
-    // Catch de erroriño
-    if(*actual == NULL){
-        *actual = nuevoUsuario;
-    } else {
+float verSaldoBilletera(Billetera billetera) { return billetera->saldo; }
+Operacion verOpsBilletera(Billetera billetera) { return billetera->ops; }
+int obtenerCantOpsBilletera(Billetera billetera) { return billetera->cantOps; }
 
-        if(verIdUsuario(nuevoUsuario) < verIdUsuario(*actual)){
-            Usuario izq = verIzqUsuario(*actual);
-            insertarUsuarioABB(&izq, nuevoUsuario);
-            asignarIzqUsuario(*actual, izq);
-        } else {
-            Usuario der = verDerUsuario(*actual);
-            insertarUsuarioABB(&der, nuevoUsuario);
-            asignarDerUsuario(*actual, der);
+Operacion buscarOpBilletera(Billetera billetera, int id) {
+    Operacion actual = billetera->ops;
+    while (actual != NULL && verIdOperacion(actual) != id) {
+        actual = verSigOperacion(actual);
+    }
+    return actual;
+}
+
+int registrarOperacion(Billetera billetera, Operacion operacion) {
+    float monto = verMontoOperacion(operacion);
+    float saldo = billetera->saldo;
+
+    if (monto <= 0) {
+        return 0;
+    }
+    if (strcmp(verTipoOperacion(operacion), "ingreso") == 0) {
+        saldo += monto;
+    } else if (strcmp(verTipoOperacion(operacion), "egreso") == 0) {
+        if (monto > saldo) {
+            return 0;
         }
-    }
-};
-
-Usuario _buscarUsuario(Usuario actual, int id){
-    if(actual == NULL){
-        return NULL;
-    }
-    if(verIdUsuario(actual) == id){
-        return actual;
-    }
-    if(id < verIdUsuario(actual)){
-        return _buscarUsuario(verIzqUsuario(actual), id);
+        saldo -= monto;
     } else {
-        return _buscarUsuario(verDerUsuario(actual), id);
+        return 0;
     }
+
+    asignarSigOperacion(operacion, billetera->ops);
+    billetera->ops = operacion;
+    billetera->saldo = saldo;
+    billetera->cantOps++;
+    return 1;
 }
 
-// Funcionalidades publicas
-
-void registrarUsuario(Billetera billetera, Usuario usuarioNuevo) {
-    if(billetera->usuarios=NULL){
-        billetera->usuarios = usuarioNuevo;
-    } else {
-        insertarUsuario(billetera->usuarios, usuarioNuevo);
+void destruirBilletera(Billetera billetera) {
+    Operacion actual = billetera->ops;
+    while (actual != NULL) {
+        Operacion siguiente = verSigOperacion(actual);
+        destruirOperacion(actual);
+        actual = siguiente;
     }
+    free(billetera);
 }
-
-
-void registrarOperacion(Billetera Billetera, Usuario usuario, Operacion operacion) {
-
-}
-// esto deberia recibir una operacion, la cual en base a su tipo, determinamos si es egreso o ingreso.
-// debatimos mañana, concluimos en crear registrarOperacion.
-void registrarIngreso() {
-
-};
-
-void registrarEgreso() {
-
-}
-
-void eliminarUsuario(int id);
-
-int obtenerCantUsuarios(Billetera billetera) {
-    return billetera->cantidadUsuarios;
-}
-
