@@ -14,12 +14,12 @@ Usuario crearUsuario(char *nombre);
 
 // Observadoras
 int verIdUsuario(Usuario usuario_objetivo);
-char* verNombreUsuario(Usuario usuario_objetivo);
-Billetera verBilleteraUsuario(Usuario usuario_objetivo);
-Usuario verSigUsuario(Usuario usuario_objetivo);
 
-// Establecedoras
-void asignarSigUsuario(Usuario usuario_objetivo, Usuario nuevoSig);
+char* verNombreUsuario(Usuario usuario_objetivo);
+
+Billetera verBilleteraUsuario(Usuario usuario_objetivo);
+
+void asignarUsuario(Usuario *usuario_destino, Usuario usuario_fuente);
 
 // Destructora: libera el usuario y su billetera (no libera los siguientes)
 void destruirUsuario(Usuario usuario_objetivo);

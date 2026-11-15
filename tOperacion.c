@@ -3,18 +3,18 @@
 #include "tFecha.h"
 #include "tOperacion.h"
 
-struct tOperacion {
+typedef struct tOperacion {
   int id;
   char tipo[8];
   float monto;
   Fecha fechaOp;
   struct tOperacion *sig;
-};
+} *Operacion;
 
 // Constructora: copia la fecha recibida
 Operacion crearOperacion(int id, char *tipo, float monto, Fecha fechaOp) {
   Operacion nuevaOperacion = malloc(sizeof(struct tOperacion));
-  if (nuevaOperacion != NULL) {
+  
     nuevaOperacion->id = id;
     strncpy(nuevaOperacion->tipo, tipo, 7);
     nuevaOperacion->tipo[7] = '\0';
@@ -22,16 +22,30 @@ Operacion crearOperacion(int id, char *tipo, float monto, Fecha fechaOp) {
     nuevaOperacion->fechaOp = NULL;
     asignarFecha(&(nuevaOperacion->fechaOp), fechaOp);
     nuevaOperacion->sig = NULL;
-  }
+    
   return nuevaOperacion;
 }
 
 // Observadoras
-int verIdOperacion(Operacion op_objetivo) { return op_objetivo->id; }
-float verMontoOperacion(Operacion op_objetivo) { return op_objetivo->monto; }
-Fecha verFechaOperacion(Operacion op_objetivo) { return op_objetivo->fechaOp; }
-char* verTipoOperacion(Operacion op_objetivo) { return op_objetivo->tipo; }
-Operacion verSigOperacion(Operacion op_objetivo) { return op_objetivo->sig; }
+int verIdOperacion(Operacion op_objetivo) { 
+  return op_objetivo->id; 
+}
+
+float verMontoOperacion(Operacion op_objetivo) {
+   return op_objetivo->monto; 
+}
+
+Fecha verFechaOperacion(Operacion op_objetivo) {
+   return op_objetivo->fechaOp; 
+}
+
+char* verTipoOperacion(Operacion op_objetivo) { 
+  return op_objetivo->tipo; 
+}
+
+Operacion verSigOperacion(Operacion op_objetivo) {
+   return op_objetivo->sig; 
+}
 
 // Modificadoras
 void asignarSigOperacion(Operacion op_objetivo, Operacion nuevaSig) {

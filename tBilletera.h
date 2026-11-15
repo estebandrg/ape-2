@@ -11,15 +11,17 @@ Billetera crearBilletera(void);
 
 // Observadoras
 float verSaldoBilletera(Billetera billetera);
-Operacion verOpsBilletera(Billetera billetera);
-int obtenerCantOpsBilletera(Billetera billetera);
-// NULL si no existe una operacion con ese id
-Operacion buscarOpBilletera(Billetera billetera, int id);
 
-// Modificadora: agrega la operacion (de tipo "ingreso" o "egreso") al inicio de la lista
-// y actualiza el saldo. Devuelve 1 si se registro; 0 si el tipo es invalido, el monto
-// no es positivo o un egreso supera el saldo (la operacion no se toma en ese caso).
-int registrarOperacion(Billetera billetera, Operacion operacion);
+Operacion verOpsBilletera(Billetera billetera);
+
+int obtenerCantOpsBilletera(Billetera billetera);
+
+// Modificadoras
+void ingresarDinero(Billetera billetera, float monto);
+
+void egresarDinero(Billetera billetera, float monto);
+
+void registrarOperacion(Billetera billetera, Operacion nueva_operacion);
 
 // Destructora: libera la billetera y todas sus operaciones
 void destruirBilletera(Billetera billetera);

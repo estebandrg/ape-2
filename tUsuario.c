@@ -1,39 +1,48 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "tUsuario.h"
+#include "tOperacion.h"
 
-struct tUsuario {
-  int id;
+
+typedef struct tUsuario{
+  int uid;
   char nombre[20];
   Billetera billetera;
-  struct tUsuario* sig;
-};
+} *Usuario;
 
-Usuario crearUsuario(char *nombre) {
-  Usuario nuevo = malloc(sizeof(struct tUsuario));
-  if (nuevo == NULL) {
-    return NULL;
-  }
-  nuevo->billetera = crearBilletera();
-  if (nuevo->billetera == NULL) {
-    free(nuevo);
-    return NULL;
-  }
-  nuevo->id = rand() % (UID_MAX + 1);
-  strncpy(nuevo->nombre, nombre, 19);
-  nuevo->nombre[19] = '\0';
-  nuevo->sig = NULL;
-  return nuevo;
+//Constructor
+Usuario crearUsuario( char nombre[20]){
+  Usuario nuevoUsuario = (Usuario)malloc(sizeof(struct tUsuario));
+  
+  nuevoUsuario->uid = rand() % (UID_MAX + 1);
+  strcpy(nuevoUsuario->nombre, nombre);
+  nuevoUsuario->billetera = crearBilletera();
+
+  return nuevoUsuario;
 }
 
-int verIdUsuario(Usuario u) { return u->id; }
-char* verNombreUsuario(Usuario u) { return u->nombre; }
-Billetera verBilleteraUsuario(Usuario u) { return u->billetera; }
-Usuario verSigUsuario(Usuario u) { return u->sig; }
+//Observadoras
+int verIdUsuario(Usuario usuario_objetivo){
+  return usuario_objetivo->uid;
+}
+char* verNombreUsuario(Usuario usuario_objetivo){
+  return usuario_objetivo->nombre;
+}
+Billetera verBilleteraUsuario(Usuario usuario_objetivo){
+  return usuario_objetivo->billetera;
+}
 
-void asignarSigUsuario(Usuario u, Usuario nuevoSig) { u->sig = nuevoSig; }
+void asignarUsuario(Usuario *usuario_destino, Usuario usuario_fuente){
+  if (usuario_destino != NULL && usuario_fuente != NULL) {
+    *usuario_destino = usuario_fuente;
+  }
+}
 
-void destruirUsuario(Usuario u) {
-  destruirBilletera(u->billetera);
-  free(u);
+//Destructoras
+void destruirUsuario(Usuario usuario_objetivo){
+  if(usuario_objetivo != NULL){
+    destruirBilletera(usuario_objetivo->billetera);
+    free(usuario_objetivo);
+  }
 }
