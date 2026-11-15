@@ -34,7 +34,7 @@ void registrarEgreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha);
 
 Usuario buscarUsuario(ArbolUsuario raiz, int uid);
 
-Usuario buscarUsuarioIdMinimo(ArbolUsuario raiz);
+ArbolUsuario buscarUsuarioIdMinimo(ArbolUsuario raiz);
 
 void imprimirUsuario(Usuario usuario);
 
@@ -150,19 +150,43 @@ void registrarUsuario(ArbolUsuario *raiz, char* nombre) {
     else {
         Usuario nuevo_usuario = crearUsuario(nombre);
         if (verIdUsuario((*raiz)->usuario) < verIdUsuario(nuevo_usuario)) {
-            agregarUsuario(&((*raiz)->izq), nuevo_usuario);
+            registrarUsuario(&((*raiz)->izq), nombre);
         } 
         else {
-            agregarUsuario(&((*raiz)->der), nuevo_usuario);
+            registrarUsuario(&((*raiz)->der), nombre);
         }
     }
 }
 
 void eliminarUsuario(ArbolUsuario *raiz, int uid) {
-    
-    Usuario usuario_buscado = buscarUsuario(*raiz, uid);
-    if (usuario_buscado == NULL) {
-        printf("Usuario con ID %d no encontrado.\n", uid);
+
+    if (*raiz != NULL) {
+        if (uid < verIdUsuario((*raiz)->usuario)) {
+            eliminarUsuario(&( (*raiz)->izq ), uid);
+        } 
+        else if (uid > verIdUsuario((*raiz)->usuario)) {
+            eliminarUsuario(&( (*raiz)->der ), uid);
+        } 
+        else {
+            // ¡Nodo encontrado!
+            ArbolUsuario temp = *raiz; // Guardamos el nodo actual
+
+            if (temp->izq == NULL) {
+                *raiz = temp->der; // Modificamos directamente el puntero original
+                free(temp);
+            } 
+            else if (temp->der == NULL) {
+                *raiz = temp->izq; // Modificamos directamente el puntero original
+                free(temp);
+            } 
+            else {
+                // Caso con dos hijos
+                ArbolUsuario sucesor = buscarUsuarioIdMinimo(temp->der);
+                temp->usuario = sucesor->usuario;
+                // Llamada recursiva pasando la dirección del subárbol derecho
+                eliminarUsuario(&(temp->der), verIdUsuario(sucesor->usuario));
+            }
+        }
     }
 }
 
@@ -238,24 +262,6 @@ int contarUsuarios(ArbolUsuario raiz) {
     return contador;
 }
 
-// Modulo recursivo que agrega un nuevo usuario en las hojas del árbol binario de búsqueda
-void agregarUsuario(ArbolUsuario *raiz, Usuario nuevo_usuario) {
-    if (*raiz == NULL) {
-        *raiz = malloc(sizeof(struct nodoUsuario));
-        (*raiz)->usuario = nuevo_usuario;
-        (*raiz)->izq = NULL;
-        (*raiz)->der = NULL;
-    } 
-    else {
-        if (verIdUsuario(nuevo_usuario) < verIdUsuario((*raiz)->usuario)) {
-            agregarUsuario(&((*raiz)->izq), nuevo_usuario);
-        } 
-        else {
-            agregarUsuario(&((*raiz)->der), nuevo_usuario);
-        }
-    }
-}
-
 Usuario buscarUsuario(ArbolUsuario raiz, int uid) {
     Usuario usuario_buscado = NULL;
 
@@ -277,12 +283,12 @@ Usuario buscarUsuario(ArbolUsuario raiz, int uid) {
     return usuario_buscado;
 }
 
-Usuario buscarUsuarioIdMinimo(ArbolUsuario raiz) {
-    Usuario usuario_minimo = NULL;
+ArbolUsuario buscarUsuarioIdMinimo(ArbolUsuario raiz) {
+    ArbolUsuario usuario_minimo = NULL;
 
     if (raiz != NULL) {
         if (raiz->izq == NULL) {
-            usuario_minimo = raiz->usuario;
+            usuario_minimo = raiz;
         } 
         else {
             usuario_minimo = buscarUsuarioIdMinimo(raiz->izq);
