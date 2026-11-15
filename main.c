@@ -20,9 +20,9 @@ void mostrarMenu(void);
 
 void mostrarUsuarios(ArbolUsuario raiz);
 
-void registrarUsuario(ArbolUsuario *raiz, char *nombre);
+void registrarUsuario(ArbolUsuario *raiz, char *nombre, int *op_exitosa);
 
-void eliminarUsuario(ArbolUsuario *raiz, int uid);
+void eliminarUsuario(ArbolUsuario *raiz, int uid, int *op_exitosa);
 
 void consultarSaldoUsuario(ArbolUsuario raiz, int uid);
 
@@ -31,6 +31,12 @@ void registrarIngreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha);
 void registrarEgreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha);
 
 // Modulos auxiliares
+
+void leerFecha(int* dia, int* mes, int* anio);
+
+void leerDatosOperacion(char *tipo, int *uid, float *monto, Fecha *fecha);
+
+void agregarUsuario(ArbolUsuario *raiz, ArbolUsuario nuevo_usuario, int *op_exitosa);
 
 Usuario buscarUsuario(ArbolUsuario raiz, int uid);
 
@@ -47,11 +53,13 @@ int main(void) {
     srand((unsigned)time(NULL));
     
     ArbolUsuario raiz = NULL;
+    int cantidad_usuarios = 0;
     char nombre[20];
     int uid;
     float monto;
-
     Fecha fecha = NULL;
+
+    int op_exitosa = 0;
 
     mostrarMenu();
 
@@ -63,28 +71,43 @@ int main(void) {
 
         switch (opcion) {
             case 1:
-                if (contarUsuarios(raiz) == 0){
+                cantidad_usuarios = contarUsuarios(raiz);
+                if (cantidad_usuarios == 0){
                     printf("No hay usuarios registrados.\n");
                 }
                 else {
                 printf("Lista de usuarios:\n");
-                printf("Total de usuarios: %d\n", contarUsuarios(raiz));
+                printf("Total de usuarios: %d\n", cantidad_usuarios);
                     mostrarUsuarios(raiz);
                 }
                 break;
 
             case 2:
+                printf("Ingrese el nombre del usuario a registrar: ");
                 scanf("%s", nombre);
-                registrarUsuario(&raiz, nombre);
-                nombre[0] = '\0'; //Limpiar el nombre después de registrar el usuario 
+                registrarUsuario(&raiz, nombre, &op_exitosa);
+                if (op_exitosa) {
+                    printf("Usuario '%s' registrado exitosamente.\n", nombre);
+                } else {
+                    printf("Error al registrar el usuario '%s'.\n", nombre);
+                }
+                op_exitosa = 0; // Reiniciar el indicador de éxito para la próxima operación
                 // Registrar usuario
                 break;
             case 3:
+                printf("Ingrese el ID del usuario a eliminar: ");
                 scanf("%d", &uid);
-                eliminarUsuario(&raiz, uid);
+                eliminarUsuario(&raiz, uid, &op_exitosa);
+                if (op_exitosa) {
+                        printf("Usuario con ID %d eliminado exitosamente.\n", uid);
+                } else {
+                        printf("Usuario con ID %d no encontrado.\n", uid);
+                    }
+                op_exitosa = 0; // Reiniciar el indicador de éxito para la próxima operación
                 // Eliminar usuario
                 break;
             case 4:
+                printf("Ingrese el ID del usuario para consultar su saldo: ");
                 scanf("%d", &uid);
                 consultarSaldoUsuario(raiz, uid);
                 // Consultar saldo de un usuario
@@ -92,12 +115,14 @@ int main(void) {
             case 5:
                 leerDatosOperacion("ingreso", &uid, &monto, &fecha);
                 registrarIngreso(raiz, uid, monto, fecha);
+                destruirFecha(fecha); // Liberar la memoria de la fecha después de registrar la operación
                 fecha=NULL;
                 // Registrar ingreso
                 break;
             case 6:
                 leerDatosOperacion("egreso", &uid, &monto, &fecha);
                 registrarEgreso(raiz, uid, monto, fecha);
+                destruirFecha(fecha); // Liberar la memoria de la fecha después de registrar la operación
                 fecha=NULL;
                 //libera a la fecha de proposito, ya que la operacion se apodera de su referencia
                 break;
@@ -109,6 +134,8 @@ int main(void) {
         }
     }
     while (opcion!=7);
+
+    destruirUsuarios(raiz);
 
     return 0;
 }
@@ -139,33 +166,50 @@ void mostrarUsuarios(ArbolUsuario raiz){
     }
 }    
 
-void registrarUsuario(ArbolUsuario *raiz, char* nombre) {
+void registrarUsuario(ArbolUsuario *raiz, char* nombre, int *op_exitosa) {
+    ArbolUsuario nuevoNodo = malloc(sizeof(struct nodoUsuario));
 
-    if (raiz == NULL) {
-        *raiz = malloc(sizeof(struct nodoUsuario));
-        (*raiz)->usuario = crearUsuario(nombre);
-        (*raiz)->izq = NULL;
-        (*raiz)->der = NULL;
-    } 
-    else {
-        Usuario nuevo_usuario = crearUsuario(nombre);
-        if (verIdUsuario((*raiz)->usuario) < verIdUsuario(nuevo_usuario)) {
-            registrarUsuario(&((*raiz)->izq), nombre);
+    Usuario nuevoUsuario = NULL;
+    int intentos = 0;
+
+    while (nuevoUsuario == NULL && intentos < MAX_INTENTOS_UID) {
+        nuevoUsuario = crearUsuario(nombre);
+        if (nuevoUsuario != NULL && buscarUsuario(*raiz, verIdUsuario(nuevoUsuario)) != NULL) {
+            destruirUsuario(nuevoUsuario);
+            nuevoUsuario = NULL;
+        }
+        intentos++;
+    }
+    
+    if (intentos != MAX_INTENTOS_UID){
+        nuevoNodo->usuario = nuevoUsuario;
+
+        nuevoNodo->izq = NULL;
+        nuevoNodo->der = NULL;
+
+        if (*raiz == NULL) {
+            *raiz = nuevoNodo;
+            *op_exitosa = 1; // Indicar que la operación fue exitosa
         } 
         else {
-            registrarUsuario(&((*raiz)->der), nombre);
+            if (verIdUsuario(nuevoNodo->usuario) < verIdUsuario((*raiz)->usuario)) {
+                agregarUsuario(&((*raiz)->izq), nuevoNodo, op_exitosa);
+            } else {
+                agregarUsuario(&((*raiz)->der), nuevoNodo, op_exitosa);
+            }
         }
     }
+
 }
 
-void eliminarUsuario(ArbolUsuario *raiz, int uid) {
+void eliminarUsuario(ArbolUsuario *raiz, int uid, int *op_exitosa) {
 
     if (*raiz != NULL) {
         if (uid < verIdUsuario((*raiz)->usuario)) {
-            eliminarUsuario(&( (*raiz)->izq ), uid);
+            eliminarUsuario(&( (*raiz)->izq ), uid, op_exitosa);
         } 
         else if (uid > verIdUsuario((*raiz)->usuario)) {
-            eliminarUsuario(&( (*raiz)->der ), uid);
+            eliminarUsuario(&( (*raiz)->der ), uid, op_exitosa);
         } 
         else {
             // ¡Nodo encontrado!
@@ -173,19 +217,40 @@ void eliminarUsuario(ArbolUsuario *raiz, int uid) {
 
             if (temp->izq == NULL) {
                 *raiz = temp->der; // Modificamos directamente el puntero original
+                destruirUsuario(temp->usuario); // Liberamos la memoria del usuario
                 free(temp);
+                *op_exitosa = 1; // Indicar que la operación fue exitosa
             } 
             else if (temp->der == NULL) {
                 *raiz = temp->izq; // Modificamos directamente el puntero original
+                destruirUsuario(temp->usuario); // Liberamos la memoria del usuario
                 free(temp);
+                *op_exitosa = 1; // Indicar que la operación fue exitosa
+
             } 
             else {
-                // Caso con dos hijos
-                ArbolUsuario sucesor = buscarUsuarioIdMinimo(temp->der);
+                Usuario usuario_eliminado = temp->usuario;
+                ArbolUsuario padre_sucesor = temp;
+                ArbolUsuario sucesor = temp->der;
+
+                while (sucesor->izq != NULL) {
+                    padre_sucesor = sucesor;
+                    sucesor = sucesor->izq;
+                }
+
                 temp->usuario = sucesor->usuario;
-                // Llamada recursiva pasando la dirección del subárbol derecho
-                eliminarUsuario(&(temp->der), verIdUsuario(sucesor->usuario));
-            }
+
+                if (padre_sucesor == temp) {
+                    padre_sucesor->der = sucesor->der;
+                } 
+                else {
+                    padre_sucesor->izq = sucesor->der;
+                }
+
+                free(sucesor);                 // solo el nodo: el usuario ya se movió
+                destruirUsuario(usuario_eliminado);
+                *op_exitosa = 1;
+                }
         }
     }
 }
@@ -229,11 +294,11 @@ void registrarEgreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha) {
 
 void leerFecha(int* dia, int* mes, int* anio){
     printf("    Día: ");
-    scanf("%d", &dia);
+    scanf("%d", dia);
     printf("    Mes: ");
-    scanf("%d", &mes);
+    scanf("%d", mes);
     printf("    Año: ");
-    scanf("%d", &anio);
+    scanf("%d", anio);
 }
 
 void leerDatosOperacion(char *tipo, int *uid, float *monto, Fecha *fecha) {
@@ -260,6 +325,19 @@ int contarUsuarios(ArbolUsuario raiz) {
         }
     }
     return contador;
+}
+
+void agregarUsuario(ArbolUsuario *raiz, ArbolUsuario nuevo_usuario, int *op_exitosa) {
+    if (*raiz == NULL) {
+        *raiz = nuevo_usuario;
+        *op_exitosa = 1;
+    } 
+    else if (verIdUsuario(nuevo_usuario->usuario) < verIdUsuario((*raiz)->usuario)) {
+        agregarUsuario(&((*raiz)->izq), nuevo_usuario, op_exitosa);
+    } 
+    else {
+        agregarUsuario(&((*raiz)->der), nuevo_usuario, op_exitosa);
+    }
 }
 
 Usuario buscarUsuario(ArbolUsuario raiz, int uid) {
@@ -300,7 +378,7 @@ ArbolUsuario buscarUsuarioIdMinimo(ArbolUsuario raiz) {
 
 //Modulo que muestra la informacion de un usuario en pantalla
 void imprimirUsuario(Usuario usuario_objetivo) {
-    printf("ID: %d, Nombre: %s, Saldo: %.2f\n, Operaciones realizadas: %d\n", 
+    printf("ID: %d, Nombre: %s, Saldo: %.2f, Operaciones realizadas: %d\n", 
         verIdUsuario(usuario_objetivo), 
         verNombreUsuario(usuario_objetivo), 
         verSaldoBilletera(verBilleteraUsuario(usuario_objetivo)),

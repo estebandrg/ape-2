@@ -65,6 +65,8 @@ void asignarOperacion(Operacion* op_destino, Operacion op_fuente) {
 
 // Destructora: libera solo esta operacion (no las siguientes)
 void destruirOperacion(Operacion op_objetivo) {
-  destruirFecha(op_objetivo->fechaOp);
-  free(op_objetivo);
+  if (op_objetivo != NULL) {
+    destruirFecha(op_objetivo->fechaOp);
+    free(op_objetivo);
+  }
 }

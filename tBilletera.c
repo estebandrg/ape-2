@@ -57,11 +57,13 @@ void registrarOperacion(Billetera billetera_objetivo, Operacion nueva_operacion)
 }
 
 void destruirBilletera(Billetera billetera_objetivo) {
-    Operacion actual = billetera_objetivo->ops;
-    while (actual != NULL) {
-        Operacion siguiente = verSigOperacion(actual);
-        destruirOperacion(actual);
-        actual = siguiente;
+    if (billetera_objetivo != NULL) {
+        Operacion actual = billetera_objetivo->ops;
+        while (actual != NULL) {
+            Operacion siguiente = verSigOperacion(actual);
+            destruirOperacion(actual);
+            actual = siguiente;
+        }
+        free(billetera_objetivo);
     }
-    free(billetera_objetivo);
 }

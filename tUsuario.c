@@ -12,9 +12,10 @@ typedef struct tUsuario{
 } *Usuario;
 
 //Constructor
-Usuario crearUsuario( char nombre[20]){
-  Usuario nuevoUsuario = (Usuario)malloc(sizeof(struct tUsuario));
-  
+Usuario crearUsuario(char* nombre){
+  Usuario nuevoUsuario= NULL;
+
+  nuevoUsuario = (Usuario)malloc(sizeof(struct tUsuario));
   nuevoUsuario->uid = rand() % (UID_MAX + 1);
   strcpy(nuevoUsuario->nombre, nombre);
   nuevoUsuario->billetera = crearBilletera();
@@ -31,12 +32,6 @@ char* verNombreUsuario(Usuario usuario_objetivo){
 }
 Billetera verBilleteraUsuario(Usuario usuario_objetivo){
   return usuario_objetivo->billetera;
-}
-
-void asignarUsuario(Usuario *usuario_destino, Usuario usuario_fuente){
-  if (usuario_destino != NULL && usuario_fuente != NULL) {
-    *usuario_destino = usuario_fuente;
-  }
 }
 
 //Destructoras
