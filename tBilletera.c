@@ -2,11 +2,11 @@
 #include <string.h>
 #include "tBilletera.h"
 
-typedef struct tBilletera {
+struct tBilletera {
     float saldo;
     int cantOps;
     Operacion ops;
-} *Billetera;
+};
 
 Billetera crearBilletera(void) {
     Billetera nueva = malloc(sizeof(struct tBilletera));

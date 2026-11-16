@@ -18,9 +18,7 @@ char* verNombreUsuario(Usuario usuario_objetivo);
 
 Billetera verBilleteraUsuario(Usuario usuario_objetivo);
 
-void asignarUsuario(Usuario *usuario_destino, Usuario usuario_fuente);
-
-// Destructora: libera el usuario y su billetera (no libera los siguientes)
+// Destructora
 void destruirUsuario(Usuario usuario_objetivo);
 
 #endif

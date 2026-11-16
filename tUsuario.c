@@ -2,22 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tUsuario.h"
-#include "tOperacion.h"
 
-
-typedef struct tUsuario{
+struct tUsuario{
   int uid;
   char nombre[20];
   Billetera billetera;
-} *Usuario;
+};
 
 //Constructor
 Usuario crearUsuario(char* nombre){
   Usuario nuevoUsuario= NULL;
-
   nuevoUsuario = (Usuario)malloc(sizeof(struct tUsuario));
   nuevoUsuario->uid = rand() % (UID_MAX + 1);
-  strcpy(nuevoUsuario->nombre, nombre);
+  strncpy(nuevoUsuario->nombre, nombre, sizeof(nuevoUsuario->nombre) - 1);
+  nuevoUsuario->nombre[sizeof(nuevoUsuario->nombre) - 1] = '\0';  
   nuevoUsuario->billetera = crearBilletera();
 
   return nuevoUsuario;

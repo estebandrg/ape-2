@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include "tFecha.h"
 
+#define ANIO_MAXIMO 2100 
+
 struct tFecha {
   int dia;
   int mes;
@@ -28,7 +30,7 @@ int esFechaValida(int dia, int mes, int anio) {
   int fechaValida = 0;
   int maxDia = 0;
 
-  if (anio > 0 && anio < 2027 && mes >= 1 && mes <= 12 && dia >= 1) {
+  if (anio > 0 && anio < ANIO_MAXIMO && mes >= 1 && mes <= 12 && dia >= 1) {
     maxDia = diasPorMes[mes - 1];
 
     if (mes == 2 && esBisiesto(anio)) {
@@ -70,15 +72,15 @@ int obtenerAnio(Fecha fecha_objetivo) {
 }
 
 void asignarFecha(Fecha *fecha_destino, Fecha fecha_fuente) {
-    if (fecha_destino != NULL && fecha_fuente != NULL) {
-        if (*fecha_destino == NULL) {
-            *fecha_destino = malloc(sizeof(struct tFecha));
-        }
-        if (*fecha_destino != NULL) {
-            **fecha_destino = *fecha_fuente;
-        }
+    if (fecha_destino == NULL && fecha_fuente != NULL) {
+        (*fecha_destino) = malloc(sizeof(struct tFecha));
+        (*fecha_destino)->dia = fecha_fuente->dia;
+        (*fecha_destino)->mes = fecha_fuente->mes;
+        (*fecha_destino)->anio = fecha_fuente->anio;
     }
 }
 void destruirFecha(Fecha fecha_objetivo) {
-  free(fecha_objetivo);
+  if (fecha_objetivo != NULL) {
+    free(fecha_objetivo);
+  } 
 }

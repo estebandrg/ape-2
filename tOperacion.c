@@ -3,13 +3,13 @@
 #include "tFecha.h"
 #include "tOperacion.h"
 
-typedef struct tOperacion {
+struct tOperacion {
   int id;
   char tipo[8];
   float monto;
   Fecha fechaOp;
   struct tOperacion *sig;
-} *Operacion;
+};
 
 // Constructora: copia la fecha recibida
 Operacion crearOperacion(int id, char *tipo, float monto, Fecha fechaOp) {

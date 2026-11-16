@@ -26,9 +26,9 @@ void eliminarUsuario(ArbolUsuario *raiz, int uid, int *op_exitosa);
 
 void consultarSaldoUsuario(ArbolUsuario raiz, int uid);
 
-void registrarIngreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha);
+void registrarIngreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int *op_exitosa);
 
-void registrarEgreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha);
+void registrarEgreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int *op_exitosa);
 
 // Modulos auxiliares
 
@@ -39,8 +39,6 @@ void leerDatosOperacion(char *tipo, int *uid, float *monto, Fecha *fecha);
 void agregarUsuario(ArbolUsuario *raiz, ArbolUsuario nuevo_usuario, int *op_exitosa);
 
 Usuario buscarUsuario(ArbolUsuario raiz, int uid);
-
-ArbolUsuario buscarUsuarioIdMinimo(ArbolUsuario raiz);
 
 void imprimirUsuario(Usuario usuario);
 
@@ -54,9 +52,9 @@ int main(void) {
     
     ArbolUsuario raiz = NULL;
     int cantidad_usuarios = 0;
-    char nombre[20];
-    int uid;
-    float monto;
+    char nombre[20]='\0';
+    int uid=0;
+    float monto=0.0;
     Fecha fecha = NULL;
 
     int op_exitosa = 0;
@@ -70,7 +68,7 @@ int main(void) {
         scanf("%d", &opcion);
 
         switch (opcion) {
-            case 1:
+            case 1: //Mostrar usuarios en lista
                 cantidad_usuarios = contarUsuarios(raiz);
                 if (cantidad_usuarios == 0){
                     printf("No hay usuarios registrados.\n");
@@ -82,9 +80,9 @@ int main(void) {
                 }
                 break;
 
-            case 2:
+            case 2: // Registrar usuario
                 printf("Ingrese el nombre del usuario a registrar: ");
-                scanf("%s", nombre);
+                scanf("%19s", nombre);
                 registrarUsuario(&raiz, nombre, &op_exitosa);
                 if (op_exitosa) {
                     printf("Usuario '%s' registrado exitosamente.\n", nombre);
@@ -92,7 +90,6 @@ int main(void) {
                     printf("Error al registrar el usuario '%s'.\n", nombre);
                 }
                 op_exitosa = 0; // Reiniciar el indicador de éxito para la próxima operación
-                // Registrar usuario
                 break;
             case 3:
                 printf("Ingrese el ID del usuario a eliminar: ");
@@ -106,22 +103,32 @@ int main(void) {
                 op_exitosa = 0; // Reiniciar el indicador de éxito para la próxima operación
                 // Eliminar usuario
                 break;
-            case 4:
+            case 4:// Consultar saldo de un usuario
                 printf("Ingrese el ID del usuario para consultar su saldo: ");
                 scanf("%d", &uid);
                 consultarSaldoUsuario(raiz, uid);
-                // Consultar saldo de un usuario
+                
                 break;
-            case 5:
+            case 5:// Registrar ingreso
                 leerDatosOperacion("ingreso", &uid, &monto, &fecha);
-                registrarIngreso(raiz, uid, monto, fecha);
+                registrarIngreso(raiz, uid, monto, fecha, &op_exitosa);
+                if (op_exitosa) {
+                    printf("Ingreso registrado exitosamente para el usuario con ID %d.\n", uid);
+                } else {
+                    printf("Error al registrar el ingreso para el usuario con ID %d.\n", uid);
+                }
                 destruirFecha(fecha); // Liberar la memoria de la fecha después de registrar la operación
                 fecha=NULL;
-                // Registrar ingreso
+                
                 break;
-            case 6:
+            case 6:// Registrar egreso
                 leerDatosOperacion("egreso", &uid, &monto, &fecha);
-                registrarEgreso(raiz, uid, monto, fecha);
+                registrarEgreso(raiz, uid, monto, fecha, &op_exitosa);
+                if (op_exitosa) {
+                    printf("Egreso registrado exitosamente para el usuario con ID %d.\n", uid);
+                } else {
+                    printf("Error al registrar el egreso para el usuario con ID %d.\n", uid);
+                }
                 destruirFecha(fecha); // Liberar la memoria de la fecha después de registrar la operación
                 fecha=NULL;
                 //libera a la fecha de proposito, ya que la operacion se apodera de su referencia
@@ -166,40 +173,34 @@ void mostrarUsuarios(ArbolUsuario raiz){
     }
 }    
 
-void registrarUsuario(ArbolUsuario *raiz, char* nombre, int *op_exitosa) {
-    ArbolUsuario nuevoNodo = malloc(sizeof(struct nodoUsuario));
+void registrarUsuario(ArbolUsuario *raiz, char *nombre, int *op_exitosa) {
+    *op_exitosa = 0;
 
     Usuario nuevoUsuario = NULL;
     int intentos = 0;
 
     while (nuevoUsuario == NULL && intentos < MAX_INTENTOS_UID) {
         nuevoUsuario = crearUsuario(nombre);
-        if (nuevoUsuario != NULL && buscarUsuario(*raiz, verIdUsuario(nuevoUsuario)) != NULL) {
+        if (nuevoUsuario != NULL &&
+            buscarUsuario(*raiz, verIdUsuario(nuevoUsuario)) != NULL) {
             destruirUsuario(nuevoUsuario);
             nuevoUsuario = NULL;
         }
         intentos++;
     }
-    
-    if (intentos != MAX_INTENTOS_UID){
-        nuevoNodo->usuario = nuevoUsuario;
 
-        nuevoNodo->izq = NULL;
-        nuevoNodo->der = NULL;
+    if (nuevoUsuario != NULL) {         // se logró un usuario con UID único
+        ArbolUsuario nuevoNodo = malloc(sizeof(struct nodoUsuario));
 
-        if (*raiz == NULL) {
-            *raiz = nuevoNodo;
-            *op_exitosa = 1; // Indicar que la operación fue exitosa
-        } 
-        else {
-            if (verIdUsuario(nuevoNodo->usuario) < verIdUsuario((*raiz)->usuario)) {
-                agregarUsuario(&((*raiz)->izq), nuevoNodo, op_exitosa);
-            } else {
-                agregarUsuario(&((*raiz)->der), nuevoNodo, op_exitosa);
-            }
+        if (nuevoNodo != NULL) {
+            nuevoNodo->usuario = nuevoUsuario;
+            nuevoNodo->izq = NULL;
+            nuevoNodo->der = NULL;
+            agregarUsuario(raiz, nuevoNodo, op_exitosa);
+        } else {
+            destruirUsuario(nuevoUsuario);  // falló el malloc: liberar el usuario
         }
     }
-
 }
 
 void eliminarUsuario(ArbolUsuario *raiz, int uid, int *op_exitosa) {
@@ -268,24 +269,34 @@ void consultarSaldoUsuario(ArbolUsuario raiz, int uid){
     }
 }
 
-void registrarIngreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha) {
+void registrarIngreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int *op_exitosa) {
     Usuario usuario_buscado = buscarUsuario(raiz, uid);
     if (usuario_buscado == NULL) {
         printf("Usuario con ID %d no encontrado.\n", uid);
+        *op_exitosa = 0;
     } else {
-        Operacion nueva_operacion = crearOperacion(uid, "ingreso", monto, fecha);
+        int id_operacion = 1+obtenerCantOpsBilletera(verBilleteraUsuario(usuario_buscado));
+        Operacion nueva_operacion = crearOperacion(id_operacion, "ingreso", monto, fecha);
         registrarOperacion(verBilleteraUsuario(usuario_buscado), nueva_operacion);
+        *op_exitosa = 1;
     }
 }
 
-void registrarEgreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha) {
+void registrarEgreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int *op_exitosa) {
     Usuario usuario_buscado = buscarUsuario(raiz, uid);
     if (usuario_buscado == NULL) {
         printf("Usuario con ID %d no encontrado.\n", uid);
+        *op_exitosa = 0;
     } 
+    else if(verSaldoBilletera(verBilleteraUsuario(usuario_buscado)) < monto) {
+         printf("Saldo insuficiente para realizar el egreso de %.2f.\n", monto);
+        *op_exitosa = 0;
+    }
     else {
-        Operacion nueva_operacion = crearOperacion(uid, "egreso", monto, fecha);
+        int id_operacion = 1+obtenerCantOpsBilletera(verBilleteraUsuario(usuario_buscado));
+        Operacion nueva_operacion = crearOperacion(id_operacion, "egreso", monto, fecha);
         registrarOperacion(verBilleteraUsuario(usuario_buscado), nueva_operacion);
+        *op_exitosa = 1;
     }
 }
 
@@ -302,15 +313,28 @@ void leerFecha(int* dia, int* mes, int* anio){
 }
 
 void leerDatosOperacion(char *tipo, int *uid, float *monto, Fecha *fecha) {
-    int dia, mes, anio;
+    int dia=0;
+    int mes=0; 
+    int anio=0;
+    *fecha = NULL;
+
     printf("Ingrese los datos de la operacion de %s: \n", tipo);
     printf("ID del usuario: ");
     scanf("%d", uid);
-    printf("Monto: ");
-    scanf("%f", monto);
-    printf("Fecha actual: ");
-    leerFecha(&dia, &mes, &anio);
-    *fecha = crearFecha(dia, mes, anio);
+
+    do {
+        printf("Monto: ");
+        scanf("%f", monto);
+    } while (*monto <= 0);
+
+    do {
+        printf("Fecha de la operación:\n");
+        leerFecha(&dia, &mes, &anio);
+        *fecha = crearFecha(dia, mes, anio);
+        if (*fecha == NULL) {
+            printf("Fecha invalida. Intente nuevamente.\n");
+        }
+    } while (*fecha == NULL);
 }
 
 int contarUsuarios(ArbolUsuario raiz) {
@@ -360,22 +384,6 @@ Usuario buscarUsuario(ArbolUsuario raiz, int uid) {
        
     return usuario_buscado;
 }
-
-ArbolUsuario buscarUsuarioIdMinimo(ArbolUsuario raiz) {
-    ArbolUsuario usuario_minimo = NULL;
-
-    if (raiz != NULL) {
-        if (raiz->izq == NULL) {
-            usuario_minimo = raiz;
-        } 
-        else {
-            usuario_minimo = buscarUsuarioIdMinimo(raiz->izq);
-        }
-    }
-
-    return usuario_minimo;
-}
-
 //Modulo que muestra la informacion de un usuario en pantalla
 void imprimirUsuario(Usuario usuario_objetivo) {
     printf("ID: %d, Nombre: %s, Saldo: %.2f, Operaciones realizadas: %d\n", 
