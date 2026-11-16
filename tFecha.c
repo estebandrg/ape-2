@@ -72,11 +72,13 @@ int obtenerAnio(Fecha fecha_objetivo) {
 }
 
 void asignarFecha(Fecha *fecha_destino, Fecha fecha_fuente) {
-    if (fecha_destino == NULL && fecha_fuente != NULL) {
-        (*fecha_destino) = malloc(sizeof(struct tFecha));
-        (*fecha_destino)->dia = fecha_fuente->dia;
-        (*fecha_destino)->mes = fecha_fuente->mes;
-        (*fecha_destino)->anio = fecha_fuente->anio;
+    if (fecha_destino != NULL && fecha_fuente != NULL) {
+        if (*fecha_destino == NULL) {
+            *fecha_destino = malloc(sizeof(struct tFecha));
+        }
+        if (*fecha_destino != NULL) {
+            **fecha_destino = *fecha_fuente;
+        }
     }
 }
 void destruirFecha(Fecha fecha_objetivo) {

@@ -52,7 +52,7 @@ int main(void) {
     
     ArbolUsuario raiz = NULL;
     int cantidad_usuarios = 0;
-    char nombre[20]='\0';
+    char nombre[20]={0};
     int uid=0;
     float monto=0.0;
     Fecha fecha = NULL;
@@ -131,7 +131,6 @@ int main(void) {
                 }
                 destruirFecha(fecha); // Liberar la memoria de la fecha después de registrar la operación
                 fecha=NULL;
-                //libera a la fecha de proposito, ya que la operacion se apodera de su referencia
                 break;
             case 7:
                 printf("Saliendo del sistema.\n");
@@ -272,7 +271,6 @@ void consultarSaldoUsuario(ArbolUsuario raiz, int uid){
 void registrarIngreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int *op_exitosa) {
     Usuario usuario_buscado = buscarUsuario(raiz, uid);
     if (usuario_buscado == NULL) {
-        printf("Usuario con ID %d no encontrado.\n", uid);
         *op_exitosa = 0;
     } else {
         int id_operacion = 1+obtenerCantOpsBilletera(verBilleteraUsuario(usuario_buscado));
@@ -285,11 +283,9 @@ void registrarIngreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int 
 void registrarEgreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int *op_exitosa) {
     Usuario usuario_buscado = buscarUsuario(raiz, uid);
     if (usuario_buscado == NULL) {
-        printf("Usuario con ID %d no encontrado.\n", uid);
         *op_exitosa = 0;
     } 
     else if(verSaldoBilletera(verBilleteraUsuario(usuario_buscado)) < monto) {
-         printf("Saldo insuficiente para realizar el egreso de %.2f.\n", monto);
         *op_exitosa = 0;
     }
     else {

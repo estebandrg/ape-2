@@ -13,8 +13,8 @@ struct tOperacion {
 
 // Constructora: copia la fecha recibida
 Operacion crearOperacion(int id, char *tipo, float monto, Fecha fechaOp) {
-  Operacion nuevaOperacion = malloc(sizeof(struct tOperacion));
-  
+    Operacion nuevaOperacion = malloc(sizeof(struct tOperacion));
+    
     nuevaOperacion->id = id;
     strncpy(nuevaOperacion->tipo, tipo, 7);
     nuevaOperacion->tipo[7] = '\0';
@@ -22,8 +22,8 @@ Operacion crearOperacion(int id, char *tipo, float monto, Fecha fechaOp) {
     nuevaOperacion->fechaOp = NULL;
     asignarFecha(&(nuevaOperacion->fechaOp), fechaOp);
     nuevaOperacion->sig = NULL;
-    
-  return nuevaOperacion;
+      
+    return nuevaOperacion;
 }
 
 // Observadoras
