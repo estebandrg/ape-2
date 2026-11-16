@@ -6,7 +6,8 @@
 // Billetera exclusiva de un usuario: saldo + lista enlazada de operaciones
 typedef struct tBilletera *Billetera;
 
-// Constructora: saldo inicial 0, sin operaciones
+// Constructora: 
+// Devuelve una billetera valida (!=NULL) saldo inicial 0, sin operaciones
 Billetera crearBilletera(void);
 
 // Observadoras

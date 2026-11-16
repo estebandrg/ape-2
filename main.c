@@ -271,9 +271,9 @@ void consultarSaldoUsuario(ArbolUsuario raiz, int uid){
 
 void registrarIngreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int *op_exitosa) {
     Usuario usuario_buscado = buscarUsuario(raiz, uid);
-    if (usuario_buscado == NULL) {
+    if (usuario_buscado == NULL || monto < 0) {
         *op_exitosa = 0;
-    } else if (monto > 0) {
+    } else {
         int id_operacion = 1+obtenerCantOpsBilletera(verBilleteraUsuario(usuario_buscado));
         Operacion nueva_operacion = crearOperacion(id_operacion, "ingreso", monto, fecha);
         registrarOperacion(verBilleteraUsuario(usuario_buscado), nueva_operacion);
@@ -283,10 +283,11 @@ void registrarIngreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int 
 
 void registrarEgreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int *op_exitosa) {
     Usuario usuario_buscado = buscarUsuario(raiz, uid);
-    if (usuario_buscado == NULL) {
+
+    if (usuario_buscado == NULL || monto <= 0) {
         *op_exitosa = 0;
     } 
-    else if(verSaldoBilletera(verBilleteraUsuario(usuario_buscado)) < monto && monto > 0) {
+    else if(verSaldoBilletera(verBilleteraUsuario(usuario_buscado)) < monto) {
         *op_exitosa = 0;
     }
     else {

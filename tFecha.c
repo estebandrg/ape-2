@@ -9,6 +9,29 @@ struct tFecha {
   int anio;
 };
 
+//Funcionalidades de la Intefaz de Fecha
+
+Fecha crearFecha(int dia, int mes, int anio) {
+    Fecha nuevaFecha = NULL;
+    nuevaFecha = malloc(sizeof(struct tFecha));
+    nuevaFecha->dia = dia;
+    nuevaFecha->mes = mes;
+    nuevaFecha->anio = anio;
+    return nuevaFecha;
+}
+
+int obtenerDia(Fecha fecha_objetivo) { 
+  return fecha_objetivo->dia;
+}
+
+int obtenerMes(Fecha fecha_objetivo) {
+   return fecha_objetivo->mes; 
+}
+
+int obtenerAnio(Fecha fecha_objetivo) {
+   return fecha_objetivo->anio; 
+}
+
 int esBisiesto(int anio) {
   int anioEsBisiesto = 0;
 
@@ -43,28 +66,6 @@ int esFechaValida(int dia, int mes, int anio) {
   }
 
   return fechaValida;
-}
-
-//Funcionalidades de la Intefaz de Fecha
-Fecha crearFecha(int dia, int mes, int anio) {
-    Fecha nuevaFecha = NULL;
-    nuevaFecha = malloc(sizeof(struct tFecha));
-    nuevaFecha->dia = dia;
-    nuevaFecha->mes = mes;
-    nuevaFecha->anio = anio;
-    return nuevaFecha;
-}
-
-int obtenerDia(Fecha fecha_objetivo) { 
-  return fecha_objetivo->dia;
-}
-
-int obtenerMes(Fecha fecha_objetivo) {
-   return fecha_objetivo->mes; 
-}
-
-int obtenerAnio(Fecha fecha_objetivo) {
-   return fecha_objetivo->anio; 
 }
 
 void asignarFecha(Fecha *fecha_destino, Fecha fecha_fuente) {

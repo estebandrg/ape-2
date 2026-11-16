@@ -5,6 +5,7 @@
 typedef struct tOperacion *Operacion;
 
 // Constructora (copia la fecha). tipo: "ingreso" o "egreso"
+// Devuelve una operacion valida (!= NULL)
 Operacion crearOperacion(int id, char *tipo, float monto, Fecha fechaOp);
 
 // Observadoras
