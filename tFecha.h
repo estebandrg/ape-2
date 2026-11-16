@@ -10,6 +10,8 @@ Fecha crearFecha(int dia, int mes, int anio);
 int obtenerDia(Fecha fecha_objetivo);
 int obtenerMes(Fecha fecha_objetivo);
 int obtenerAnio(Fecha fecha_objetivo);
+int esBisiesto(int anio);
+int esFechaValida(int dia, int mes, int anio);
 
 // Modificadoras: copia fecha_fuente en *fecha_destino (lo reserva si es NULL)
 void asignarFecha(Fecha* fecha_destino, Fecha fecha_fuente);

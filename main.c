@@ -203,6 +203,7 @@ void registrarUsuario(ArbolUsuario *raiz, char *nombre, int *op_exitosa) {
 }
 
 void eliminarUsuario(ArbolUsuario *raiz, int uid, int *op_exitosa) {
+    *op_exitosa=0;
 
     if (*raiz != NULL) {
         if (uid < verIdUsuario((*raiz)->usuario)) {
@@ -272,7 +273,7 @@ void registrarIngreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int 
     Usuario usuario_buscado = buscarUsuario(raiz, uid);
     if (usuario_buscado == NULL) {
         *op_exitosa = 0;
-    } else {
+    } else if (monto > 0) {
         int id_operacion = 1+obtenerCantOpsBilletera(verBilleteraUsuario(usuario_buscado));
         Operacion nueva_operacion = crearOperacion(id_operacion, "ingreso", monto, fecha);
         registrarOperacion(verBilleteraUsuario(usuario_buscado), nueva_operacion);
@@ -285,7 +286,7 @@ void registrarEgreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int *
     if (usuario_buscado == NULL) {
         *op_exitosa = 0;
     } 
-    else if(verSaldoBilletera(verBilleteraUsuario(usuario_buscado)) < monto) {
+    else if(verSaldoBilletera(verBilleteraUsuario(usuario_buscado)) < monto && monto > 0) {
         *op_exitosa = 0;
     }
     else {
@@ -326,10 +327,12 @@ void leerDatosOperacion(char *tipo, int *uid, float *monto, Fecha *fecha) {
     do {
         printf("Fecha de la operación:\n");
         leerFecha(&dia, &mes, &anio);
-        *fecha = crearFecha(dia, mes, anio);
-        if (*fecha == NULL) {
+        if (!esFechaValida(dia, mes, anio)) {
             printf("Fecha invalida. Intente nuevamente.\n");
+        } else{
+            *fecha = crearFecha(dia, mes, anio);
         }
+        
     } while (*fecha == NULL);
 }
 

@@ -47,16 +47,12 @@ int esFechaValida(int dia, int mes, int anio) {
 
 //Funcionalidades de la Intefaz de Fecha
 Fecha crearFecha(int dia, int mes, int anio) {
-  Fecha nuevaFecha = NULL;
-  if (esFechaValida(dia, mes, anio)) {
+    Fecha nuevaFecha = NULL;
     nuevaFecha = malloc(sizeof(struct tFecha));
-    if (nuevaFecha != NULL) {
-      nuevaFecha->dia = dia;
-      nuevaFecha->mes = mes;
-      nuevaFecha->anio = anio;
-    }
-  }
-  return nuevaFecha;
+    nuevaFecha->dia = dia;
+    nuevaFecha->mes = mes;
+    nuevaFecha->anio = anio;
+    return nuevaFecha;
 }
 
 int obtenerDia(Fecha fecha_objetivo) { 
