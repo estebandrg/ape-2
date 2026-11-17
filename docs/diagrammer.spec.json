@@ -1,0 +1,695 @@
+{
+  "title": "Sistema de Billeteras",
+  "theme": "dark",
+  "modules": [
+    {
+      "id": "mostrarMenu",
+      "label": "mostrarMenu",
+      "description": "Imprime el menu de opciones.",
+      "inputs": [],
+      "outputs": []
+    },
+    {
+      "id": "mostrarUsuarios",
+      "label": "mostrarUsuarios",
+      "description": "Lista los usuarios en orden de UID.",
+      "inputs": [
+        {
+          "name": "raiz",
+          "type": "ArbolUsuario"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "id": "registrarUsuario",
+      "label": "registrarUsuario",
+      "description": "Crea un usuario con UID unico y lo inserta.",
+      "inputs": [
+        {
+          "name": "raiz",
+          "type": "ArbolUsuario*"
+        },
+        {
+          "name": "nombre",
+          "type": "char*"
+        },
+        {
+          "name": "op_exitosa",
+          "type": "int*"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "id": "eliminarUsuario",
+      "label": "eliminarUsuario",
+      "description": "Elimina del arbol al usuario con ese UID.",
+      "inputs": [
+        {
+          "name": "raiz",
+          "type": "ArbolUsuario*"
+        },
+        {
+          "name": "uid",
+          "type": "int"
+        },
+        {
+          "name": "op_exitosa",
+          "type": "int*"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "id": "consultarSaldoUsuario",
+      "label": "consultarSaldoUsuario",
+      "description": "Muestra el saldo de un usuario.",
+      "inputs": [
+        {
+          "name": "raiz",
+          "type": "ArbolUsuario"
+        },
+        {
+          "name": "uid",
+          "type": "int"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "id": "registrarIngreso",
+      "label": "registrarIngreso",
+      "description": "Registra un ingreso en la billetera.",
+      "inputs": [
+        {
+          "name": "raiz",
+          "type": "ArbolUsuario"
+        },
+        {
+          "name": "uid",
+          "type": "int"
+        },
+        {
+          "name": "monto",
+          "type": "float"
+        },
+        {
+          "name": "fecha",
+          "type": "Fecha"
+        },
+        {
+          "name": "op_exitosa",
+          "type": "int*"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "id": "registrarEgreso",
+      "label": "registrarEgreso",
+      "description": "Registra un egreso si alcanza el saldo.",
+      "inputs": [
+        {
+          "name": "raiz",
+          "type": "ArbolUsuario"
+        },
+        {
+          "name": "uid",
+          "type": "int"
+        },
+        {
+          "name": "monto",
+          "type": "float"
+        },
+        {
+          "name": "fecha",
+          "type": "Fecha"
+        },
+        {
+          "name": "op_exitosa",
+          "type": "int*"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "id": "leerFecha",
+      "label": "leerFecha",
+      "description": "Lee dia, mes y anio por teclado.",
+      "inputs": [
+        {
+          "name": "dia",
+          "type": "int*"
+        },
+        {
+          "name": "mes",
+          "type": "int*"
+        },
+        {
+          "name": "anio",
+          "type": "int*"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "id": "leerDatosOperacion",
+      "label": "leerDatosOperacion",
+      "description": "Lee uid, monto y una fecha valida.",
+      "inputs": [
+        {
+          "name": "tipo",
+          "type": "char*"
+        },
+        {
+          "name": "uid",
+          "type": "int*"
+        },
+        {
+          "name": "monto",
+          "type": "float*"
+        },
+        {
+          "name": "fecha",
+          "type": "Fecha*"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "id": "agregarUsuario",
+      "label": "agregarUsuario",
+      "description": "Inserta un nodo en el arbol por UID.",
+      "inputs": [
+        {
+          "name": "raiz",
+          "type": "ArbolUsuario*"
+        },
+        {
+          "name": "nuevo_usuario",
+          "type": "ArbolUsuario"
+        },
+        {
+          "name": "op_exitosa",
+          "type": "int*"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "id": "buscarUsuario",
+      "label": "buscarUsuario",
+      "description": "Busca un usuario por UID en el arbol.",
+      "inputs": [
+        {
+          "name": "raiz",
+          "type": "ArbolUsuario"
+        },
+        {
+          "name": "uid",
+          "type": "int"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "retorno",
+          "type": "Usuario"
+        }
+      ]
+    },
+    {
+      "id": "imprimirUsuario",
+      "label": "imprimirUsuario",
+      "description": "Muestra los datos de un usuario.",
+      "inputs": [
+        {
+          "name": "usuario",
+          "type": "Usuario"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "id": "contarUsuarios",
+      "label": "contarUsuarios",
+      "description": "Cuenta los usuarios del arbol.",
+      "inputs": [
+        {
+          "name": "raiz",
+          "type": "ArbolUsuario"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "retorno",
+          "type": "int"
+        }
+      ]
+    },
+    {
+      "id": "destruirUsuarios",
+      "label": "destruirUsuarios",
+      "description": "Libera todo el arbol de usuarios.",
+      "inputs": [
+        {
+          "name": "raiz",
+          "type": "ArbolUsuario"
+        }
+      ],
+      "outputs": []
+    }
+  ],
+  "structures": [
+    {
+      "id": "nodoUsuario",
+      "label": "nodoUsuario (ArbolUsuario)",
+      "kind": "struct",
+      "fields": [
+        {
+          "name": "usuario",
+          "type": "Usuario"
+        },
+        {
+          "name": "izq",
+          "type": "nodoUsuario*"
+        },
+        {
+          "name": "der",
+          "type": "nodoUsuario*"
+        }
+      ]
+    },
+    {
+      "id": "tOperacion",
+      "label": "tOperacion (nodo de la lista)",
+      "kind": "struct",
+      "fields": [
+        {
+          "name": "id",
+          "type": "int"
+        },
+        {
+          "name": "tipo",
+          "type": "char[8]"
+        },
+        {
+          "name": "monto",
+          "type": "float"
+        },
+        {
+          "name": "fechaOp",
+          "type": "Fecha"
+        },
+        {
+          "name": "sig",
+          "type": "tOperacion*"
+        }
+      ]
+    },
+    {
+      "id": "IUsuario",
+      "label": "IUsuario (tUsuario.h)",
+      "kind": "interface",
+      "methods": [
+        {
+          "name": "crearUsuario",
+          "params": [
+            {
+              "name": "nombre",
+              "type": "char*"
+            }
+          ],
+          "returns": "Usuario"
+        },
+        {
+          "name": "verIdUsuario",
+          "params": [
+            {
+              "name": "usuario",
+              "type": "Usuario"
+            }
+          ],
+          "returns": "int"
+        },
+        {
+          "name": "verNombreUsuario",
+          "params": [
+            {
+              "name": "usuario",
+              "type": "Usuario"
+            }
+          ],
+          "returns": "char*"
+        },
+        {
+          "name": "verBilleteraUsuario",
+          "params": [
+            {
+              "name": "usuario",
+              "type": "Usuario"
+            }
+          ],
+          "returns": "Billetera"
+        },
+        {
+          "name": "destruirUsuario",
+          "params": [
+            {
+              "name": "usuario",
+              "type": "Usuario"
+            }
+          ],
+          "returns": "void"
+        }
+      ]
+    },
+    {
+      "id": "IBilletera",
+      "label": "IBilletera (tBilletera.h)",
+      "kind": "interface",
+      "methods": [
+        {
+          "name": "crearBilletera",
+          "returns": "Billetera"
+        },
+        {
+          "name": "verSaldoBilletera",
+          "params": [
+            {
+              "name": "billetera",
+              "type": "Billetera"
+            }
+          ],
+          "returns": "float"
+        },
+        {
+          "name": "verOpsBilletera",
+          "params": [
+            {
+              "name": "billetera",
+              "type": "Billetera"
+            }
+          ],
+          "returns": "Operacion"
+        },
+        {
+          "name": "obtenerCantOpsBilletera",
+          "params": [
+            {
+              "name": "billetera",
+              "type": "Billetera"
+            }
+          ],
+          "returns": "int"
+        },
+        {
+          "name": "ingresarDinero",
+          "params": [
+            {
+              "name": "billetera",
+              "type": "Billetera"
+            },
+            {
+              "name": "monto",
+              "type": "float"
+            }
+          ],
+          "returns": "void"
+        },
+        {
+          "name": "egresarDinero",
+          "params": [
+            {
+              "name": "billetera",
+              "type": "Billetera"
+            },
+            {
+              "name": "monto",
+              "type": "float"
+            }
+          ],
+          "returns": "void"
+        },
+        {
+          "name": "registrarOperacion",
+          "params": [
+            {
+              "name": "billetera",
+              "type": "Billetera"
+            },
+            {
+              "name": "nueva_operacion",
+              "type": "Operacion"
+            }
+          ],
+          "returns": "void"
+        },
+        {
+          "name": "destruirBilletera",
+          "params": [
+            {
+              "name": "billetera",
+              "type": "Billetera"
+            }
+          ],
+          "returns": "void"
+        }
+      ]
+    },
+    {
+      "id": "IOperacion",
+      "label": "IOperacion (tOperacion.h)",
+      "kind": "interface",
+      "methods": [
+        {
+          "name": "crearOperacion",
+          "params": [
+            {
+              "name": "id",
+              "type": "int"
+            },
+            {
+              "name": "tipo",
+              "type": "char*"
+            },
+            {
+              "name": "monto",
+              "type": "float"
+            },
+            {
+              "name": "fechaOp",
+              "type": "Fecha"
+            }
+          ],
+          "returns": "Operacion"
+        },
+        {
+          "name": "verIdOperacion",
+          "params": [
+            {
+              "name": "op",
+              "type": "Operacion"
+            }
+          ],
+          "returns": "int"
+        },
+        {
+          "name": "verMontoOperacion",
+          "params": [
+            {
+              "name": "op",
+              "type": "Operacion"
+            }
+          ],
+          "returns": "float"
+        },
+        {
+          "name": "verFechaOperacion",
+          "params": [
+            {
+              "name": "op",
+              "type": "Operacion"
+            }
+          ],
+          "returns": "Fecha"
+        },
+        {
+          "name": "verTipoOperacion",
+          "params": [
+            {
+              "name": "op",
+              "type": "Operacion"
+            }
+          ],
+          "returns": "char*"
+        },
+        {
+          "name": "verSigOperacion",
+          "params": [
+            {
+              "name": "op",
+              "type": "Operacion"
+            }
+          ],
+          "returns": "Operacion"
+        },
+        {
+          "name": "asignarSigOperacion",
+          "params": [
+            {
+              "name": "op",
+              "type": "Operacion"
+            },
+            {
+              "name": "nuevaSig",
+              "type": "Operacion"
+            }
+          ],
+          "returns": "void"
+        },
+        {
+          "name": "pasarSigOperacion",
+          "params": [
+            {
+              "name": "op",
+              "type": "Operacion*"
+            }
+          ],
+          "returns": "void"
+        },
+        {
+          "name": "asignarOperacion",
+          "params": [
+            {
+              "name": "destino",
+              "type": "Operacion*"
+            },
+            {
+              "name": "fuente",
+              "type": "Operacion"
+            }
+          ],
+          "returns": "void"
+        },
+        {
+          "name": "destruirOperacion",
+          "params": [
+            {
+              "name": "op",
+              "type": "Operacion"
+            }
+          ],
+          "returns": "void"
+        }
+      ]
+    },
+    {
+      "id": "IFecha",
+      "label": "IFecha (tFecha.h)",
+      "kind": "interface",
+      "methods": [
+        {
+          "name": "crearFecha",
+          "params": [
+            {
+              "name": "dia",
+              "type": "int"
+            },
+            {
+              "name": "mes",
+              "type": "int"
+            },
+            {
+              "name": "anio",
+              "type": "int"
+            }
+          ],
+          "returns": "Fecha"
+        },
+        {
+          "name": "obtenerDia",
+          "params": [
+            {
+              "name": "fecha",
+              "type": "Fecha"
+            }
+          ],
+          "returns": "int"
+        },
+        {
+          "name": "obtenerMes",
+          "params": [
+            {
+              "name": "fecha",
+              "type": "Fecha"
+            }
+          ],
+          "returns": "int"
+        },
+        {
+          "name": "obtenerAnio",
+          "params": [
+            {
+              "name": "fecha",
+              "type": "Fecha"
+            }
+          ],
+          "returns": "int"
+        },
+        {
+          "name": "esBisiesto",
+          "params": [
+            {
+              "name": "anio",
+              "type": "int"
+            }
+          ],
+          "returns": "int"
+        },
+        {
+          "name": "esFechaValida",
+          "params": [
+            {
+              "name": "dia",
+              "type": "int"
+            },
+            {
+              "name": "mes",
+              "type": "int"
+            },
+            {
+              "name": "anio",
+              "type": "int"
+            }
+          ],
+          "returns": "int"
+        },
+        {
+          "name": "asignarFecha",
+          "params": [
+            {
+              "name": "destino",
+              "type": "Fecha*"
+            },
+            {
+              "name": "fuente",
+              "type": "Fecha"
+            }
+          ],
+          "returns": "void"
+        },
+        {
+          "name": "destruirFecha",
+          "params": [
+            {
+              "name": "fecha",
+              "type": "Fecha"
+            }
+          ],
+          "returns": "void"
+        }
+      ]
+    }
+  ]
+}
