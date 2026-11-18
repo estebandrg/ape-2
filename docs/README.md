@@ -9,8 +9,9 @@ transparente.
 
 | Carpeta | Qué muestra |
 | --- | --- |
-| `modulos/funciones/` | Módulos de `main.c` que devuelven un valor (`buscarUsuario`, `contarUsuarios`). |
-| `modulos/procedimientos/` | Módulos de `main.c` que no devuelven valor (`void`). Los que entregan resultados por puntero, como `op_exitosa`, cuentan como procedimientos. |
+| `modulos/funciones/auxiliares/` | Módulos auxiliares de `main.c` que devuelven un valor (`buscarUsuario`, `contarUsuarios`). |
+| `modulos/procedimientos/` | Módulos principales de `main.c` que no devuelven valor (`void`). Los que entregan resultados por puntero, como `op_exitosa`, cuentan como procedimientos. |
+| `modulos/procedimientos/auxiliares/` | Módulos auxiliares `void` (`leerFecha`, `leerDatosOperacion`, `agregarUsuario`, `imprimirUsuario`, `destruirUsuarios`). |
 | `interfaces/` | La interfaz pública de cada TAD (`IUsuario`, `IBilletera`, `IOperacion`, `IFecha`), tomada de los `.h`. |
 | `estructuras/` | Las estructuras tipo nodo: `nodoUsuario` (árbol de usuarios) y `tOperacion` (lista de operaciones). |
 | `diagrammer.spec.json` | Especificación de la que salen todas las imágenes. Es la fuente editable. |
@@ -33,8 +34,10 @@ node diagrammer-docs/bin/diagrammer.mjs render docs/diagrammer.spec.json \
   -o docs/_tmp --scale 3 --only module,structure --no-uses
 
 # 3. Ordenar en subcarpetas
-mkdir -p docs/modulos/funciones docs/modulos/procedimientos docs/interfaces docs/estructuras
-mv docs/_tmp/module-buscarUsuario.png docs/_tmp/module-contarUsuarios.png docs/modulos/funciones/
+mkdir -p docs/modulos/funciones/auxiliares docs/modulos/procedimientos/auxiliares docs/interfaces docs/estructuras
+mv docs/_tmp/module-buscarUsuario.png docs/_tmp/module-contarUsuarios.png docs/modulos/funciones/auxiliares/
+mv docs/_tmp/module-leerFecha.png docs/_tmp/module-leerDatosOperacion.png docs/_tmp/module-agregarUsuario.png \
+   docs/_tmp/module-imprimirUsuario.png docs/_tmp/module-destruirUsuarios.png docs/modulos/procedimientos/auxiliares/
 mv docs/_tmp/module-*      docs/modulos/procedimientos/
 mv docs/_tmp/structure-I*  docs/interfaces/
 mv docs/_tmp/structure-*   docs/estructuras/

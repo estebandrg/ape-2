@@ -159,16 +159,14 @@ void mostrarMenu(void) {
     printf("7. Salir\n");
 }
 
+// Pre-cond: raiz es ABB válido, ordenado por UID.
 void mostrarUsuarios(ArbolUsuario raiz){
-    if (raiz != NULL) {
-
-        if (raiz->izq != NULL) {
-            mostrarUsuarios(raiz->izq);
-        }
-        imprimirUsuario(raiz->usuario);
-        if (raiz->der != NULL) {
-            mostrarUsuarios(raiz->der);
-        }
+    if (raiz->izq != NULL) {
+        mostrarUsuarios(raiz->izq);
+    }
+    imprimirUsuario(raiz->usuario);
+    if (raiz->der != NULL) {
+        mostrarUsuarios(raiz->der);
     }
 }    
 
@@ -367,20 +365,18 @@ void agregarUsuario(ArbolUsuario *raiz, ArbolUsuario nuevo_usuario, int *op_exit
 Usuario buscarUsuario(ArbolUsuario raiz, int uid) {
     Usuario usuario_buscado = NULL;
 
-    if (raiz != NULL) {
-        if (verIdUsuario(raiz->usuario) == uid) {
-            usuario_buscado = raiz->usuario;
+    if (verIdUsuario(raiz->usuario) == uid) {
+        usuario_buscado = raiz->usuario;
+    } 
+    else{
+        if (uid < verIdUsuario(raiz->usuario) && raiz->izq != NULL) {
+            usuario_buscado = buscarUsuario(raiz->izq, uid);
         } 
-        else{
-            if (uid < verIdUsuario(raiz->usuario) && raiz->izq != NULL) {
-                usuario_buscado = buscarUsuario(raiz->izq, uid);
-            } 
-
-            else if (uid > verIdUsuario(raiz->usuario) && raiz->der != NULL) {
-                usuario_buscado = buscarUsuario(raiz->der, uid);
-            }
+        else if (uid > verIdUsuario(raiz->usuario) && raiz->der != NULL) {
+            usuario_buscado = buscarUsuario(raiz->der, uid);
         }
     }
+    
        
     return usuario_buscado;
 }
