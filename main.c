@@ -5,30 +5,29 @@
 #include "tBilletera.h"
 #include "tOperacion.h"
 #include "tFecha.h"
-#include "tUsuario.h"
 
-typedef struct nodoUsuario{
-    Usuario usuario;
-    struct nodoUsuario *izq;
-    struct nodoUsuario *der;
-} *ArbolUsuario;
+typedef struct nodoBilletera{
+    Billetera billetera;
+    struct nodoBilletera *izq;
+    struct nodoBilletera *der;
+} *ArbolBilletera;
 
 #define MAX_INTENTOS_UID 100
 
 //Operaciones principales de la billetera
 void mostrarMenu(void);
 
-void mostrarUsuarios(ArbolUsuario raiz);
+void mostrarBilleteras(ArbolBilletera raiz);
 
-void registrarUsuario(ArbolUsuario *raiz, char *nombre, int *op_exitosa);
+void registrarBilletera(ArbolBilletera *raiz, char *nombre, int *op_exitosa);
 
-void eliminarUsuario(ArbolUsuario *raiz, int uid, int *op_exitosa);
+void eliminarBilletera(ArbolBilletera *raiz, int uid, int *op_exitosa);
 
-void consultarSaldoUsuario(ArbolUsuario raiz, int uid);
+void consultarSaldoBilletera(ArbolBilletera raiz, int uid);
 
-void registrarIngreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int *op_exitosa);
+void registrarIngreso(ArbolBilletera raiz, int uid, float monto, Fecha fecha, int *op_exitosa);
 
-void registrarEgreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int *op_exitosa);
+void registrarEgreso(ArbolBilletera raiz, int uid, float monto, Fecha fecha, int *op_exitosa);
 
 // Modulos auxiliares
 
@@ -36,77 +35,78 @@ void leerFecha(int* dia, int* mes, int* anio);
 
 void leerDatosOperacion(char *tipo, int *uid, float *monto, Fecha *fecha);
 
-void agregarUsuario(ArbolUsuario *raiz, ArbolUsuario nuevo_usuario, int *op_exitosa);
+void agregarBilletera(ArbolBilletera *raiz, ArbolBilletera nueva_billetera, int *op_exitosa);
 
-Usuario buscarUsuario(ArbolUsuario raiz, int uid);
+void buscarSucesor(ArbolBilletera raiz, ArbolBilletera *padre_sucesor, ArbolBilletera *sucesor);
 
-void imprimirUsuario(Usuario usuario);
+Billetera buscarBilletera(ArbolBilletera raiz, int uid);
 
-int contarUsuarios(ArbolUsuario raiz);
+void imprimirBilletera(Billetera billetera);
 
-void destruirUsuarios(ArbolUsuario raiz);
+int contarBilleteras(ArbolBilletera raiz);
+
+void destruirBilleteras(ArbolBilletera raiz);
 
 
 int main(void) {
     srand((unsigned)time(NULL));
-    
-    ArbolUsuario raiz = NULL;
-    int cantidad_usuarios = 0;
+    //Variables de proposito temporal
+    ArbolBilletera raiz = NULL;
+    int cantidad_billeteras = 0;
     char nombre[20]={0};
     int uid=0;
     float monto=0.0;
     Fecha fecha = NULL;
-
     int op_exitosa = 0;
 
-    mostrarMenu();
-
+    //Variable de control de operaciones
     int opcion = 0;
     do 
-    {
+    {   
+        mostrarMenu();
         printf("Ingrese una opcion: ");
         scanf("%d", &opcion);
 
         switch (opcion) {
-            case 1: //Mostrar usuarios en lista
-                cantidad_usuarios = contarUsuarios(raiz);
-                if (cantidad_usuarios == 0){
-                    printf("No hay usuarios registrados.\n");
+            case 1: //Mostrar billeteras en lista
+                cantidad_billeteras = contarBilleteras(raiz);
+                if (cantidad_billeteras == 0){
+                    printf("->No hay usuarios registrados.\n");
                 }
                 else {
-                printf("Lista de usuarios:\n");
-                printf("Total de usuarios: %d\n", cantidad_usuarios);
-                    mostrarUsuarios(raiz);
+                printf("->Lista de usuarios:\n");
+                printf("->Total de usuarios: %d\n", cantidad_billeteras);
+                    mostrarBilleteras(raiz);
                 }
                 break;
 
             case 2: // Registrar usuario
-                printf("Ingrese el nombre del usuario a registrar: ");
+                printf("->Ingrese el nombre del usuario a registrar: ");
                 scanf("%19s", nombre);
-                registrarUsuario(&raiz, nombre, &op_exitosa);
+                registrarBilletera(&raiz, nombre, &op_exitosa);
                 if (op_exitosa) {
-                    printf("Usuario '%s' registrado exitosamente.\n", nombre);
+                    printf("->Usuario '%s' registrado exitosamente.\n", nombre);
                 } else {
-                    printf("Error al registrar el usuario '%s'.\n", nombre);
+                    printf("->Error al registrar el usuario '%s'.\n", nombre);
                 }
                 op_exitosa = 0; // Reiniciar el indicador de éxito para la próxima operación
                 break;
             case 3:
-                printf("Ingrese el ID del usuario a eliminar: ");
+                printf("->Ingrese el ID del usuario a eliminar: ");
                 scanf("%d", &uid);
-                eliminarUsuario(&raiz, uid, &op_exitosa);
+                eliminarBilletera(&raiz, uid, &op_exitosa);
                 if (op_exitosa) {
-                        printf("Usuario con ID %d eliminado exitosamente.\n", uid);
+                        printf("->Usuario con ID %d eliminado exitosamente.\n", uid);
                 } else {
-                        printf("Usuario con ID %d no encontrado.\n", uid);
+                        printf("->Usuario con ID %d no encontrado.\n", uid);
                     }
                 op_exitosa = 0; // Reiniciar el indicador de éxito para la próxima operación
                 // Eliminar usuario
                 break;
             case 4:// Consultar saldo de un usuario
-                printf("Ingrese el ID del usuario para consultar su saldo: ");
+                printf("->Ingrese el ID del usuario para consultar su saldo: ");
                 scanf("%d", &uid);
-                consultarSaldoUsuario(raiz, uid);
+                consultarSaldoBilletera(raiz, uid);
                 
                 break;
             case 5:// Registrar ingreso
@@ -125,29 +125,30 @@ int main(void) {
                 leerDatosOperacion("egreso", &uid, &monto, &fecha);
                 registrarEgreso(raiz, uid, monto, fecha, &op_exitosa);
                 if (op_exitosa) {
-                    printf("Egreso registrado exitosamente para el usuario con ID %d.\n", uid);
+                    printf("->Egreso registrado exitosamente para el usuario con ID %d.\n", uid);
                 } else {
-                    printf("Error al registrar el egreso para el usuario con ID %d.\n", uid);
+                    printf("->Error al registrar el egreso para el usuario con ID %d.\n", uid);
                 }
                 destruirFecha(fecha); // Liberar la memoria de la fecha después de registrar la operación
                 fecha=NULL;
                 break;
             case 7:
-                printf("Saliendo del sistema.\n");
+                printf("->Saliendo del sistema.\n");
                 break;
             default:
-                printf("Opcion invalida. Intente nuevamente.\n");
+                printf("->Opcion invalida. Intente nuevamente.\n");
         }
     }
-    while (opcion!=7);
+    while (opcion != 7);
 
-    destruirUsuarios(raiz);
+    destruirBilleteras(raiz);
 
     return 0;
 }
 
 //Modulos principales de la billetera
 void mostrarMenu(void) {
+    printf("------------------------------------\n");
     printf("Bienvenido al sistema de billeteras.\n");
     printf("Menu:\n");
     printf("1. Mostrar lista de usuarios.\n");
@@ -157,89 +158,88 @@ void mostrarMenu(void) {
     printf("5. Registrar ingreso.\n");
     printf("6. Registrar egreso.\n");
     printf("7. Salir\n");
+    printf("------------------------------------\n");
+
 }
 
-void mostrarUsuarios(ArbolUsuario raiz){
+void mostrarBilleteras(ArbolBilletera raiz){
     if (raiz != NULL) {
 
         if (raiz->izq != NULL) {
-            mostrarUsuarios(raiz->izq);
+            mostrarBilleteras(raiz->izq);
         }
-        imprimirUsuario(raiz->usuario);
+        imprimirBilletera(raiz->billetera);
         if (raiz->der != NULL) {
-            mostrarUsuarios(raiz->der);
+            mostrarBilleteras(raiz->der);
         }
     }
 }    
 
-void registrarUsuario(ArbolUsuario *raiz, char *nombre, int *op_exitosa) {
+void registrarBilletera(ArbolBilletera *raiz, char *nombre, int *op_exitosa) {
     *op_exitosa = 0;
 
-    Usuario nuevoUsuario = NULL;
+    Billetera nuevaBilletera = NULL;
     int intentos = 0;
 
-    while (nuevoUsuario == NULL && intentos < MAX_INTENTOS_UID) {
-        nuevoUsuario = crearUsuario(nombre);
-        if (nuevoUsuario != NULL &&
-            buscarUsuario(*raiz, verIdUsuario(nuevoUsuario)) != NULL) {
-            destruirUsuario(nuevoUsuario);
-            nuevoUsuario = NULL;
+    while (nuevaBilletera == NULL && intentos < MAX_INTENTOS_UID) {
+        nuevaBilletera = crearBilletera(nombre);
+        if (nuevaBilletera != NULL &&
+            buscarBilletera(*raiz, verIdBilletera(nuevaBilletera)) != NULL) {
+            destruirBilletera(nuevaBilletera);
+            nuevaBilletera = NULL;
         }
         intentos++;
     }
 
-    if (nuevoUsuario != NULL) {         // se logró un usuario con UID único
-        ArbolUsuario nuevoNodo = malloc(sizeof(struct nodoUsuario));
+    if (nuevaBilletera != NULL) {         // se logró una billetera con UID único
+        ArbolBilletera nuevoNodo = malloc(sizeof(struct nodoBilletera));
 
         if (nuevoNodo != NULL) {
-            nuevoNodo->usuario = nuevoUsuario;
+            nuevoNodo->billetera = nuevaBilletera;
             nuevoNodo->izq = NULL;
             nuevoNodo->der = NULL;
-            agregarUsuario(raiz, nuevoNodo, op_exitosa);
+            agregarBilletera(raiz, nuevoNodo, op_exitosa);
         } else {
-            destruirUsuario(nuevoUsuario);  // falló el malloc: liberar el usuario
+            destruirBilletera(nuevaBilletera);  // falló el malloc: liberar la billetera
         }
     }
 }
 
-void eliminarUsuario(ArbolUsuario *raiz, int uid, int *op_exitosa) {
+void eliminarBilletera(ArbolBilletera *raiz, int uid, int *op_exitosa) {
     *op_exitosa=0;
 
     if (*raiz != NULL) {
-        if (uid < verIdUsuario((*raiz)->usuario)) {
-            eliminarUsuario(&( (*raiz)->izq ), uid, op_exitosa);
+        if (uid < verIdBilletera((*raiz)->billetera)) {
+            eliminarBilletera(&( (*raiz)->izq ), uid, op_exitosa);
         } 
-        else if (uid > verIdUsuario((*raiz)->usuario)) {
-            eliminarUsuario(&( (*raiz)->der ), uid, op_exitosa);
+        else if (uid > verIdBilletera((*raiz)->billetera)) {
+            eliminarBilletera(&( (*raiz)->der ), uid, op_exitosa);
         } 
         else {
             // ¡Nodo encontrado!
-            ArbolUsuario temp = *raiz; // Guardamos el nodo actual
+            ArbolBilletera temp = *raiz; // Guardamos el nodo actual
 
             if (temp->izq == NULL) {
                 *raiz = temp->der; // Modificamos directamente el puntero original
-                destruirUsuario(temp->usuario); // Liberamos la memoria del usuario
+                destruirBilletera(temp->billetera); // Liberamos la memoria de la billetera
                 free(temp);
                 *op_exitosa = 1; // Indicar que la operación fue exitosa
             } 
             else if (temp->der == NULL) {
                 *raiz = temp->izq; // Modificamos directamente el puntero original
-                destruirUsuario(temp->usuario); // Liberamos la memoria del usuario
+                destruirBilletera(temp->billetera); // Liberamos la memoria de la billetera
                 free(temp);
                 *op_exitosa = 1; // Indicar que la operación fue exitosa
 
             } 
             else {
-                Usuario usuario_eliminado = temp->usuario;
-                ArbolUsuario padre_sucesor = temp;
-                ArbolUsuario sucesor = temp->der;
+                Billetera billetera_eliminada = temp->billetera;
+                ArbolBilletera padre_sucesor = temp;
+                ArbolBilletera sucesor = NULL;
 
-                while (sucesor->izq != NULL) {
-                    padre_sucesor = sucesor;
-                    sucesor = sucesor->izq;
-                }
+                buscarSucesor(temp->der, &padre_sucesor, &sucesor);
 
-                temp->usuario = sucesor->usuario;
+                temp->billetera = sucesor->billetera;
 
                 if (padre_sucesor == temp) {
                     padre_sucesor->der = sucesor->der;
@@ -248,52 +248,48 @@ void eliminarUsuario(ArbolUsuario *raiz, int uid, int *op_exitosa) {
                     padre_sucesor->izq = sucesor->der;
                 }
 
-                free(sucesor);                 // solo el nodo: el usuario ya se movió
-                destruirUsuario(usuario_eliminado);
+                free(sucesor);                 // solo el nodo: la billetera ya se movió
+                destruirBilletera(billetera_eliminada);
                 *op_exitosa = 1;
                 }
         }
     }
 }
 
-void consultarSaldoUsuario(ArbolUsuario raiz, int uid){
-    Usuario usuario_buscado = buscarUsuario(raiz, uid);
+void consultarSaldoBilletera(ArbolBilletera raiz, int uid){
+    Billetera billetera_buscada = buscarBilletera(raiz, uid);
 
-    if (usuario_buscado == NULL) {
-        printf("Usuario con ID %d no encontrado.\n", uid);
+    if (billetera_buscada == NULL) {
+        printf("->Usuario con ID %d no encontrado.\n", uid);
     }
     else {
-        printf("Saldo de %s: %.2f\n", 
-        verNombreUsuario(usuario_buscado), 
-        verSaldoBilletera(verBilleteraUsuario(usuario_buscado)));
+        printf("->Saldo de %s: %.2f\n", 
+        verNombreBilletera(billetera_buscada), 
+        verSaldoBilletera(billetera_buscada));
     }
 }
 
-void registrarIngreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int *op_exitosa) {
-    Usuario usuario_buscado = buscarUsuario(raiz, uid);
-    if (usuario_buscado == NULL || monto < 0) {
+void registrarIngreso(ArbolBilletera raiz, int uid, float monto, Fecha fecha, int *op_exitosa) {
+    Billetera billetera_buscada = buscarBilletera(raiz, uid);
+    if (billetera_buscada == NULL || monto < 0) {
         *op_exitosa = 0;
     } else {
-        int id_operacion = 1+obtenerCantOpsBilletera(verBilleteraUsuario(usuario_buscado));
-        Operacion nueva_operacion = crearOperacion(id_operacion, "ingreso", monto, fecha);
-        registrarOperacion(verBilleteraUsuario(usuario_buscado), nueva_operacion);
+        ingresarDinero(billetera_buscada, monto, fecha);
         *op_exitosa = 1;
     }
 }
 
-void registrarEgreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int *op_exitosa) {
-    Usuario usuario_buscado = buscarUsuario(raiz, uid);
+void registrarEgreso(ArbolBilletera raiz, int uid, float monto, Fecha fecha, int *op_exitosa) {
+    Billetera billetera_buscada = buscarBilletera(raiz, uid);
 
-    if (usuario_buscado == NULL || monto <= 0) {
+    if (billetera_buscada == NULL || monto < 0) {
         *op_exitosa = 0;
     } 
-    else if(verSaldoBilletera(verBilleteraUsuario(usuario_buscado)) < monto) {
+    else if(verSaldoBilletera(billetera_buscada) < monto) {
         *op_exitosa = 0;
     }
     else {
-        int id_operacion = 1+obtenerCantOpsBilletera(verBilleteraUsuario(usuario_buscado));
-        Operacion nueva_operacion = crearOperacion(id_operacion, "egreso", monto, fecha);
-        registrarOperacion(verBilleteraUsuario(usuario_buscado), nueva_operacion);
+        egresarDinero(billetera_buscada, monto, fecha);
         *op_exitosa = 1;
     }
 }
@@ -302,11 +298,11 @@ void registrarEgreso(ArbolUsuario raiz, int uid, float monto, Fecha fecha, int *
 // Modulos auxiliares
 
 void leerFecha(int* dia, int* mes, int* anio){
-    printf("    Día: ");
+    printf("-->Día: ");
     scanf("%d", dia);
-    printf("    Mes: ");
+    printf("-->Mes: ");
     scanf("%d", mes);
-    printf("    Año: ");
+    printf("-->Año: ");
     scanf("%d", anio);
 }
 
@@ -316,20 +312,20 @@ void leerDatosOperacion(char *tipo, int *uid, float *monto, Fecha *fecha) {
     int anio=0;
     *fecha = NULL;
 
-    printf("Ingrese los datos de la operacion de %s: \n", tipo);
-    printf("ID del usuario: ");
+    printf("->Ingrese los datos de la operacion de %s: \n", tipo);
+    printf("-->ID del usuario: ");
     scanf("%d", uid);
 
     do {
-        printf("Monto: ");
+        printf("-->Monto: ");
         scanf("%f", monto);
     } while (*monto <= 0);
 
     do {
-        printf("Fecha de la operación:\n");
+        printf("-->Fecha de la operación:\n");
         leerFecha(&dia, &mes, &anio);
         if (!esFechaValida(dia, mes, anio)) {
-            printf("Fecha invalida. Intente nuevamente.\n");
+            printf("-->Fecha invalida. Intente nuevamente.\n");
         } else{
             *fecha = crearFecha(dia, mes, anio);
         }
@@ -337,67 +333,78 @@ void leerDatosOperacion(char *tipo, int *uid, float *monto, Fecha *fecha) {
     } while (*fecha == NULL);
 }
 
-int contarUsuarios(ArbolUsuario raiz) {
+int contarBilleteras(ArbolBilletera raiz) {
     int contador = 0;
     if (raiz != NULL) {
         contador++;
         if (raiz->izq != NULL) {
-            contador += contarUsuarios(raiz->izq);
+            contador += contarBilleteras(raiz->izq);
         }
         if (raiz->der != NULL) {
-            contador += contarUsuarios(raiz->der);
+            contador += contarBilleteras(raiz->der);
         }
     }
     return contador;
 }
 
-void agregarUsuario(ArbolUsuario *raiz, ArbolUsuario nuevo_usuario, int *op_exitosa) {
+void agregarBilletera(ArbolBilletera *raiz, ArbolBilletera nueva_billetera, int *op_exitosa) {
     if (*raiz == NULL) {
-        *raiz = nuevo_usuario;
+        *raiz = nueva_billetera;
         *op_exitosa = 1;
     } 
-    else if (verIdUsuario(nuevo_usuario->usuario) < verIdUsuario((*raiz)->usuario)) {
-        agregarUsuario(&((*raiz)->izq), nuevo_usuario, op_exitosa);
+    else if (verIdBilletera(nueva_billetera->billetera) < verIdBilletera((*raiz)->billetera)) {
+        agregarBilletera(&((*raiz)->izq), nueva_billetera, op_exitosa);
     } 
     else {
-        agregarUsuario(&((*raiz)->der), nuevo_usuario, op_exitosa);
+        agregarBilletera(&((*raiz)->der), nueva_billetera, op_exitosa);
     }
 }
 
-Usuario buscarUsuario(ArbolUsuario raiz, int uid) {
-    Usuario usuario_buscado = NULL;
+Billetera buscarBilletera(ArbolBilletera raiz, int uid) {
+    Billetera billetera_buscada = NULL;
 
     if (raiz != NULL) {
-        if (verIdUsuario(raiz->usuario) == uid) {
-            usuario_buscado = raiz->usuario;
+        if (verIdBilletera(raiz->billetera) == uid) {
+            billetera_buscada = raiz->billetera;
         } 
         else{
-            if (uid < verIdUsuario(raiz->usuario) && raiz->izq != NULL) {
-                usuario_buscado = buscarUsuario(raiz->izq, uid);
+            if (uid < verIdBilletera(raiz->billetera) && raiz->izq != NULL) {
+                billetera_buscada = buscarBilletera(raiz->izq, uid);
             } 
 
-            else if (uid > verIdUsuario(raiz->usuario) && raiz->der != NULL) {
-                usuario_buscado = buscarUsuario(raiz->der, uid);
+            else if (uid > verIdBilletera(raiz->billetera) && raiz->der != NULL) {
+                billetera_buscada = buscarBilletera(raiz->der, uid);
             }
         }
     }
        
-    return usuario_buscado;
-}
-//Modulo que muestra la informacion de un usuario en pantalla
-void imprimirUsuario(Usuario usuario_objetivo) {
-    printf("ID: %d, Nombre: %s, Saldo: %.2f, Operaciones realizadas: %d\n", 
-        verIdUsuario(usuario_objetivo), 
-        verNombreUsuario(usuario_objetivo), 
-        verSaldoBilletera(verBilleteraUsuario(usuario_objetivo)),
-        obtenerCantOpsBilletera(verBilleteraUsuario(usuario_objetivo)));
+    return billetera_buscada;
 }
 
-void destruirUsuarios(ArbolUsuario raiz) {
+// Busca recursivamente el minimo del subarbol (sucesor in-orden) y su padre.
+void buscarSucesor(ArbolBilletera raiz, ArbolBilletera *padre_sucesor, ArbolBilletera *sucesor) {
+    if (raiz->izq == NULL) {
+        *sucesor = raiz;
+    } 
+    else {
+        *padre_sucesor = raiz;
+        buscarSucesor(raiz->izq, padre_sucesor, sucesor);
+    }
+}
+//Modulo que muestra la informacion de una billetera en pantalla
+void imprimirBilletera(Billetera billetera_objetivo) {
+    printf("->ID: %d, Nombre: %s, Saldo: %.2f, Operaciones realizadas: %d\n", 
+        verIdBilletera(billetera_objetivo), 
+        verNombreBilletera(billetera_objetivo), 
+        verSaldoBilletera(billetera_objetivo),
+        obtenerCantOpsBilletera(billetera_objetivo));
+}
+
+void destruirBilleteras(ArbolBilletera raiz) {
     if (raiz != NULL) {
-        destruirUsuarios(raiz->izq);
-        destruirUsuarios(raiz->der);
-        destruirUsuario(raiz->usuario);
+        destruirBilleteras(raiz->izq);
+        destruirBilleteras(raiz->der);
+        destruirBilletera(raiz->billetera);
         free(raiz);
     }
 }

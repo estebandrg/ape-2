@@ -22,8 +22,6 @@ Operacion verSigOperacion(Operacion op_objetivo);
 // Modificadoras
 void asignarSigOperacion(Operacion op_objetivo, Operacion nuevaSig);
 
-void pasarSigOperacion(Operacion* op_objetivo);
-
 void asignarOperacion(Operacion* op_destino, Operacion op_fuente);
 
 // Destructora (solo esta operacion)

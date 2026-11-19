@@ -52,10 +52,6 @@ void asignarSigOperacion(Operacion op_objetivo, Operacion nuevaSig) {
   op_objetivo->sig = nuevaSig;
 }
 
-void pasarSigOperacion(Operacion *op_objetivo) {
-  (*op_objetivo) = (*op_objetivo)->sig;
-}
-
 void asignarOperacion(Operacion* op_destino, Operacion op_fuente) {
   (*op_destino)->id = op_fuente->id;
   strcpy((*op_destino)->tipo, op_fuente->tipo);

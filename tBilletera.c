@@ -3,19 +3,32 @@
 #include "tBilletera.h"
 
 struct tBilletera {
+    int uid;
+    char nombre[20];
     float saldo;
     int cantOps;
     Operacion ops;
 };
 
-Billetera crearBilletera(void) {
+Billetera crearBilletera(char *nombre) {
     Billetera nueva = malloc(sizeof(struct tBilletera));
 
+    nueva->uid = rand() % (UID_MAX + 1);
+    strncpy(nueva->nombre, nombre, sizeof(nueva->nombre) - 1);
+    nueva->nombre[sizeof(nueva->nombre) - 1] = '\0';
     nueva->saldo = 0;
     nueva->cantOps = 0;
     nueva->ops = NULL;
 
     return nueva;
+}
+
+int verIdBilletera(Billetera billetera_objetivo) {
+    return billetera_objetivo->uid;
+}
+
+char* verNombreBilletera(Billetera billetera_objetivo) {
+    return billetera_objetivo->nombre;
 }
 
 float verSaldoBilletera(Billetera billetera_objetivo) { 
@@ -30,23 +43,27 @@ int obtenerCantOpsBilletera(Billetera billetera_objetivo) {
     return billetera_objetivo->cantOps; 
 }
 
-void ingresarDinero(Billetera billetera_objetivo, float monto){
-    billetera_objetivo->saldo += monto;
+void ingresarDinero(Billetera billetera_objetivo, float monto, Fecha fecha){
+    int id_operacion = 1 + obtenerCantOpsBilletera(billetera_objetivo);
+    Operacion nueva_operacion = crearOperacion(id_operacion, "ingreso", monto, fecha);
+    registrarOperacion(billetera_objetivo, nueva_operacion);
 }
 
-void egresarDinero(Billetera billetera_objetivo, float monto){
-    billetera_objetivo->saldo -= monto;
+void egresarDinero(Billetera billetera_objetivo, float monto, Fecha fecha){
+    int id_operacion = 1 + obtenerCantOpsBilletera(billetera_objetivo);
+    Operacion nueva_operacion = crearOperacion(id_operacion, "egreso", monto, fecha);
+    registrarOperacion(billetera_objetivo, nueva_operacion);
 }
 
 void registrarOperacion(Billetera billetera_objetivo, Operacion nueva_operacion) {
     
     if (billetera_objetivo != NULL && nueva_operacion != NULL) {
         if (strcmp(verTipoOperacion(nueva_operacion), "ingreso") == 0) {
-            ingresarDinero(billetera_objetivo, verMontoOperacion(nueva_operacion));
+            billetera_objetivo->saldo += verMontoOperacion(nueva_operacion);
         } 
     
         else if (strcmp(verTipoOperacion(nueva_operacion), "egreso") == 0) {
-            egresarDinero(billetera_objetivo, verMontoOperacion(nueva_operacion));
+            billetera_objetivo->saldo -= verMontoOperacion(nueva_operacion);
         }
 
         asignarSigOperacion(nueva_operacion, billetera_objetivo->ops);
