@@ -1,2 +1,4 @@
 billetera
 .atl/
+*.o
+out

@@ -19,7 +19,9 @@ void mostrarMenu(void);
 
 void mostrarBilleteras(ArbolBilletera raiz);
 
-void registrarBilletera(ArbolBilletera *raiz, char *nombre, int *op_exitosa);
+int listarBilleterasConSaldoSuperior(ArbolBilletera raiz, float monto);
+
+void registrarBilletera(ArbolBilletera *raiz, char *nombre, int *op_exitosa, int *uid_asignado);
 
 void eliminarBilletera(ArbolBilletera *raiz, int uid, int *op_exitosa);
 
@@ -53,6 +55,8 @@ int main(void) {
     //Variables de proposito temporal
     ArbolBilletera raiz = NULL;
     int cantidad_billeteras = 0;
+    int cantidad_coincidencias = 0;
+    int uid_asignado = 0;
     char nombre[20]={0};
     int uid=0;
     float monto=0.0;
@@ -83,9 +87,9 @@ int main(void) {
             case 2: // Registrar usuario
                 printf("->Ingrese el nombre del usuario a registrar: ");
                 scanf("%19s", nombre);
-                registrarBilletera(&raiz, nombre, &op_exitosa);
+                registrarBilletera(&raiz, nombre, &op_exitosa, &uid_asignado);
                 if (op_exitosa) {
-                    printf("->Usuario '%s' registrado exitosamente.\n", nombre);
+                    printf("->Usuario '%s' registrado exitosamente con UID %d.\n", nombre, uid_asignado);
                 } else {
                     printf("->Error al registrar el usuario '%s'.\n", nombre);
                 }
@@ -132,14 +136,24 @@ int main(void) {
                 destruirFecha(fecha); // Liberar la memoria de la fecha después de registrar la operación
                 fecha=NULL;
                 break;
-            case 7:
+            case 8:
                 printf("->Saliendo del sistema.\n");
+                break;
+            case 7: // Listar billeteras con saldo superior a un monto
+                printf("->Ingrese el monto minimo de saldo: ");
+                scanf("%f", &monto);
+                cantidad_coincidencias = listarBilleterasConSaldoSuperior(raiz, monto);
+                if (cantidad_coincidencias == 0) {
+                    printf("->No hay usuarios con saldo superior a %.2f.\n", monto);
+                } else {
+                    printf("->Total de usuarios listados: %d\n", cantidad_coincidencias);
+                }
                 break;
             default:
                 printf("->Opcion invalida. Intente nuevamente.\n");
         }
     }
-    while (opcion != 7);
+    while (opcion != 8);
 
     destruirBilleteras(raiz);
 
@@ -157,7 +171,8 @@ void mostrarMenu(void) {
     printf("4. Consultar Saldo de un Usuario.\n");
     printf("5. Registrar ingreso.\n");
     printf("6. Registrar egreso.\n");
-    printf("7. Salir\n");
+    printf("7. Listar usuarios con saldo superior a un monto.\n");
+    printf("8. Salir\n");
     printf("------------------------------------\n");
 
 }
@@ -175,8 +190,24 @@ void mostrarBilleteras(ArbolBilletera raiz){
     }
 }    
 
-void registrarBilletera(ArbolBilletera *raiz, char *nombre, int *op_exitosa) {
+// Recorre el arbol en orden de UID e imprime las billeteras con saldo estrictamente mayor a monto.
+// Devuelve la cantidad de billeteras listadas.
+int listarBilleterasConSaldoSuperior(ArbolBilletera raiz, float monto) {
+    int coincidencias = 0;
+    if (raiz != NULL) {
+        coincidencias += listarBilleterasConSaldoSuperior(raiz->izq, monto);
+        if (verSaldoBilletera(raiz->billetera) > monto) {
+            imprimirBilletera(raiz->billetera);
+            coincidencias++;
+        }
+        coincidencias += listarBilleterasConSaldoSuperior(raiz->der, monto);
+    }
+    return coincidencias;
+}
+
+void registrarBilletera(ArbolBilletera *raiz, char *nombre, int *op_exitosa, int *uid_asignado) {
     *op_exitosa = 0;
+    *uid_asignado = 0;
 
     Billetera nuevaBilletera = NULL;
     int intentos = 0;
@@ -192,6 +223,7 @@ void registrarBilletera(ArbolBilletera *raiz, char *nombre, int *op_exitosa) {
     }
 
     if (nuevaBilletera != NULL) {         // se logró una billetera con UID único
+        *uid_asignado = verIdBilletera(nuevaBilletera);
         ArbolBilletera nuevoNodo = malloc(sizeof(struct nodoBilletera));
 
         if (nuevoNodo != NULL) {
