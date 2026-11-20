@@ -136,9 +136,6 @@ int main(void) {
                 destruirFecha(fecha); // Liberar la memoria de la fecha después de registrar la operación
                 fecha=NULL;
                 break;
-            case 8:
-                printf("->Saliendo del sistema.\n");
-                break;
             case 7: // Listar billeteras con saldo superior a un monto
                 printf("->Ingrese el monto minimo de saldo: ");
                 scanf("%f", &monto);
@@ -148,6 +145,9 @@ int main(void) {
                 } else {
                     printf("->Total de usuarios listados: %d\n", cantidad_coincidencias);
                 }
+                break;
+            case 8:
+                printf("->Saliendo del sistema.\n");
                 break;
             default:
                 printf("->Opcion invalida. Intente nuevamente.\n");
@@ -327,7 +327,7 @@ void registrarEgreso(ArbolBilletera raiz, int uid, float monto, Fecha fecha, int
 }
 
 
-// Modulos auxiliares
+// Modulos auxiliares de funcionamiento
 
 void leerFecha(int* dia, int* mes, int* anio){
     printf("-->Día: ");
