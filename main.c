@@ -122,8 +122,6 @@ int main() {
                     printf("Error al registrar el ingreso para el usuario con ID %d.\n", uid);
                 }
                 destruirFecha(fecha); // Liberar la memoria de la fecha después de registrar la operación
-                fecha=NULL;
-                
                 break;
             case 6:// Registrar egreso
                 leerDatosOperacion("egreso", &uid, &monto, &fecha);
@@ -134,7 +132,6 @@ int main() {
                     printf("->Error al registrar el egreso para el usuario con ID %d.\n", uid);
                 }
                 destruirFecha(fecha); // Liberar la memoria de la fecha después de registrar la operación
-                fecha=NULL;
                 break;
             case 7: // Listar billeteras con saldo superior a un monto
                 printf("->Ingrese el monto minimo de saldo: ");
