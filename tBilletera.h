@@ -15,7 +15,7 @@ typedef struct tBilletera *Billetera;
 Billetera crearBilletera(char *nombre);
 
 // Observadoras
-int verIdBilletera(Billetera billetera);
+int verUIDBilletera(Billetera billetera);
 
 char* verNombreBilletera(Billetera billetera);
 

@@ -23,7 +23,7 @@ Billetera crearBilletera(char *nombre) {
     return nueva;
 }
 
-int verIdBilletera(Billetera billetera_objetivo) {
+int verUIDBilletera(Billetera billetera_objetivo) {
     return billetera_objetivo->uid;
 }
 

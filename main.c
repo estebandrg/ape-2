@@ -209,7 +209,7 @@ void registrarBilletera(ArbolBilletera *raiz, char *nombre, int *op_exitosa, int
     while (nuevaBilletera == NULL && intentos < MAX_INTENTOS_UID) {
         nuevaBilletera = crearBilletera(nombre);
         if (nuevaBilletera != NULL &&
-            buscarBilletera(*raiz, verIdBilletera(nuevaBilletera)) != NULL) {
+            buscarBilletera(*raiz, verUIDBilletera(nuevaBilletera)) != NULL) {
             destruirBilletera(nuevaBilletera);
             nuevaBilletera = NULL;
         }
@@ -217,7 +217,7 @@ void registrarBilletera(ArbolBilletera *raiz, char *nombre, int *op_exitosa, int
     }
 
     if (nuevaBilletera != NULL) {         // se logró una billetera con UID único
-        *uid_asignado = verIdBilletera(nuevaBilletera);
+        *uid_asignado = verUIDBilletera(nuevaBilletera);
         ArbolBilletera nuevoNodo = malloc(sizeof(struct nodoBilletera));
 
         if (nuevoNodo != NULL) {
@@ -235,10 +235,10 @@ void eliminarBilletera(ArbolBilletera *raiz, int uid, int *op_exitosa) {
     *op_exitosa=0;
 
     if (*raiz != NULL) {
-        if (uid < verIdBilletera((*raiz)->billetera)) {
+        if (uid < verUIDBilletera((*raiz)->billetera)) {
             eliminarBilletera(&( (*raiz)->izq ), uid, op_exitosa);
         } 
-        else if (uid > verIdBilletera((*raiz)->billetera)) {
+        else if (uid > verUIDBilletera((*raiz)->billetera)) {
             eliminarBilletera(&( (*raiz)->der ), uid, op_exitosa);
         } 
         else {
@@ -378,7 +378,7 @@ void agregarBilletera(ArbolBilletera *raiz, ArbolBilletera nueva_billetera, int 
         *raiz = nueva_billetera;
         *op_exitosa = 1;
     } 
-    else if (verIdBilletera(nueva_billetera->billetera) < verIdBilletera((*raiz)->billetera)) {
+    else if (verUIDBilletera(nueva_billetera->billetera) < verUIDBilletera((*raiz)->billetera)) {
         agregarBilletera(&((*raiz)->izq), nueva_billetera, op_exitosa);
     } 
     else {
@@ -390,15 +390,15 @@ Billetera buscarBilletera(ArbolBilletera raiz, int uid) {
     Billetera billetera_buscada = NULL;
 
     if (raiz != NULL) {
-        if (verIdBilletera(raiz->billetera) == uid) {
+        if (verUIDBilletera(raiz->billetera) == uid) {
             billetera_buscada = raiz->billetera;
         } 
         else{
-            if (uid < verIdBilletera(raiz->billetera) && raiz->izq != NULL) {
+            if (uid < verUIDBilletera(raiz->billetera) && raiz->izq != NULL) {
                 billetera_buscada = buscarBilletera(raiz->izq, uid);
             } 
 
-            else if (uid > verIdBilletera(raiz->billetera) && raiz->der != NULL) {
+            else if (uid > verUIDBilletera(raiz->billetera) && raiz->der != NULL) {
                 billetera_buscada = buscarBilletera(raiz->der, uid);
             }
         }
@@ -420,7 +420,7 @@ void buscarSucesor(ArbolBilletera raiz, ArbolBilletera *padre_sucesor, ArbolBill
 //Modulo que muestra la informacion de una billetera en pantalla
 void imprimirBilletera(Billetera billetera_objetivo) {
     printf("->ID: %d, Nombre: %s, Saldo: %.2f, Operaciones realizadas: %d\n", 
-        verIdBilletera(billetera_objetivo), 
+        verUIDBilletera(billetera_objetivo), 
         verNombreBilletera(billetera_objetivo), 
         verSaldoBilletera(billetera_objetivo),
         obtenerCantOpsBilletera(billetera_objetivo));
