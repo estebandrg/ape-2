@@ -52,13 +52,6 @@ void asignarSigOperacion(Operacion op_objetivo, Operacion nuevaSig) {
   op_objetivo->sig = nuevaSig;
 }
 
-void asignarOperacion(Operacion* op_destino, Operacion op_fuente) {
-  (*op_destino)->id = op_fuente->id;
-  strcpy((*op_destino)->tipo, op_fuente->tipo);
-  (*op_destino)->monto = op_fuente->monto;
-  asignarFecha(&((*op_destino)->fechaOp), op_fuente->fechaOp);
-}
-
 // Destructora: libera solo esta operacion (no las siguientes)
 void destruirOperacion(Operacion op_objetivo) {
   if (op_objetivo != NULL) {
