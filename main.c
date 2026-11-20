@@ -19,7 +19,7 @@ void mostrarMenu();
 
 void mostrarBilleteras(ArbolBilletera raiz);
 
-int listarBilleterasConSaldoSuperior(ArbolBilletera raiz, float monto);
+void listarBilleterasConSaldoSuperior(ArbolBilletera raiz, float monto, int *cantidad_coincidencias);
 
 void registrarBilletera(ArbolBilletera *raiz, char *nombre, int *op_exitosa, int *uid_asignado);
 
@@ -139,7 +139,8 @@ int main() {
             case 7: // Listar billeteras con saldo superior a un monto
                 printf("->Ingrese el monto minimo de saldo: ");
                 scanf("%f", &monto);
-                cantidad_coincidencias = listarBilleterasConSaldoSuperior(raiz, monto);
+                cantidad_coincidencias = 0;
+                listarBilleterasConSaldoSuperior(raiz, monto, &cantidad_coincidencias);
                 if (cantidad_coincidencias == 0) {
                     printf("->No hay usuarios con saldo superior a %.2f.\n", monto);
                 } else {
@@ -189,18 +190,16 @@ void mostrarBilleteras(ArbolBilletera raiz){
 }    
 
 // Recorre el arbol en orden de UID e imprime las billeteras con saldo estrictamente mayor a monto.
-// Devuelve la cantidad de billeteras listadas.
-int listarBilleterasConSaldoSuperior(ArbolBilletera raiz, float monto) {
-    int coincidencias = 0;
+// Escribe en *cantidad_coincidencias la cantidad de billeteras listadas.
+void listarBilleterasConSaldoSuperior(ArbolBilletera raiz, float monto, int *cantidad_coincidencias) {
     if (raiz != NULL) {
-        coincidencias += listarBilleterasConSaldoSuperior(raiz->izq, monto);
+        listarBilleterasConSaldoSuperior(raiz->izq, monto, cantidad_coincidencias);
         if (verSaldoBilletera(raiz->billetera) > monto) {
             imprimirBilletera(raiz->billetera);
-            coincidencias++;
+            (*cantidad_coincidencias)++;
         }
-        coincidencias += listarBilleterasConSaldoSuperior(raiz->der, monto);
+        listarBilleterasConSaldoSuperior(raiz->der, monto, cantidad_coincidencias);
     }
-    return coincidencias;
 }
 
 void registrarBilletera(ArbolBilletera *raiz, char *nombre, int *op_exitosa, int *uid_asignado) {
@@ -301,7 +300,7 @@ void consultarSaldoBilletera(ArbolBilletera raiz, int uid){
 
 void registrarIngreso(ArbolBilletera raiz, int uid, float monto, Fecha fecha, int *op_exitosa) {
     Billetera billetera_buscada = buscarBilletera(raiz, uid);
-    if (billetera_buscada == NULL || monto <= 0) {
+    if (billetera_buscada == NULL) {
         *op_exitosa = 0;
     } else {
         ingresarDinero(billetera_buscada, monto, fecha);
@@ -312,7 +311,7 @@ void registrarIngreso(ArbolBilletera raiz, int uid, float monto, Fecha fecha, in
 void registrarEgreso(ArbolBilletera raiz, int uid, float monto, Fecha fecha, int *op_exitosa) {
     Billetera billetera_buscada = buscarBilletera(raiz, uid);
 
-    if (billetera_buscada == NULL || monto <= 0) {
+    if (billetera_buscada == NULL) {
         *op_exitosa = 0;
     } 
     else if(verSaldoBilletera(billetera_buscada) < monto) {
