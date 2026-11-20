@@ -15,7 +15,7 @@ typedef struct nodoBilletera{
 #define MAX_INTENTOS_UID 100
 
 //Operaciones principales de la billetera
-void mostrarMenu(void);
+void mostrarMenu();
 
 void mostrarBilleteras(ArbolBilletera raiz);
 
@@ -50,7 +50,7 @@ int contarBilleteras(ArbolBilletera raiz);
 void destruirBilleteras(ArbolBilletera raiz);
 
 
-int main(void) {
+int main() {
     srand((unsigned)time(NULL));
     //Variables de proposito temporal
     ArbolBilletera raiz = NULL;
@@ -161,8 +161,8 @@ int main(void) {
 }
 
 //Modulos principales de la billetera
-void mostrarMenu(void) {
-    printf("------------------------------------\n");
+void mostrarMenu() {
+    printf("--------------------------------------------------\n");
     printf("Bienvenido al sistema de billeteras.\n");
     printf("Menu:\n");
     printf("1. Mostrar lista de usuarios.\n");
@@ -173,20 +173,18 @@ void mostrarMenu(void) {
     printf("6. Registrar egreso.\n");
     printf("7. Listar usuarios con saldo superior a un monto.\n");
     printf("8. Salir\n");
-    printf("------------------------------------\n");
+    printf("-------------------------------------------------\n");
 
 }
 
 void mostrarBilleteras(ArbolBilletera raiz){
-    if (raiz != NULL) {
 
-        if (raiz->izq != NULL) {
-            mostrarBilleteras(raiz->izq);
-        }
-        imprimirBilletera(raiz->billetera);
-        if (raiz->der != NULL) {
-            mostrarBilleteras(raiz->der);
-        }
+     if (raiz->izq != NULL) {
+        mostrarBilleteras(raiz->izq);
+    }
+    imprimirBilletera(raiz->billetera);
+            if (raiz->der != NULL) {
+        mostrarBilleteras(raiz->der);
     }
 }    
 
@@ -303,7 +301,7 @@ void consultarSaldoBilletera(ArbolBilletera raiz, int uid){
 
 void registrarIngreso(ArbolBilletera raiz, int uid, float monto, Fecha fecha, int *op_exitosa) {
     Billetera billetera_buscada = buscarBilletera(raiz, uid);
-    if (billetera_buscada == NULL || monto < 0) {
+    if (billetera_buscada == NULL || monto <= 0) {
         *op_exitosa = 0;
     } else {
         ingresarDinero(billetera_buscada, monto, fecha);
@@ -314,7 +312,7 @@ void registrarIngreso(ArbolBilletera raiz, int uid, float monto, Fecha fecha, in
 void registrarEgreso(ArbolBilletera raiz, int uid, float monto, Fecha fecha, int *op_exitosa) {
     Billetera billetera_buscada = buscarBilletera(raiz, uid);
 
-    if (billetera_buscada == NULL || monto < 0) {
+    if (billetera_buscada == NULL || monto <= 0) {
         *op_exitosa = 0;
     } 
     else if(verSaldoBilletera(billetera_buscada) < monto) {
